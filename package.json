@@ -1,0 +1,49 @@
+{
+  "name": "react-metrics-cli",
+  "version": "1.0.0",
+  "description": "CLI pour analyser le code mort dans les projets React",
+  "main": "dist/index.js",
+  "bin": {
+    "react-metrics": "dist/index.js"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "dev": "npx ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "test": "npx jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "react",
+    "dead-code",
+    "analysis",
+    "cli",
+    "typescript",
+    "javascript"
+  ],
+  "author": "React Metrics Team",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^17.2.1",
+    "fs-extra": "^11.3.1",
+    "inquirer": "^12.9.3",
+    "node-fetch": "^3.3.2",
+    "ora": "^8.2.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.3.0",
+    "jest": "^30.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  }
+}
