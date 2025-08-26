@@ -2,14 +2,21 @@ import chalk from 'chalk';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import NexusUtils from '../../../outil-nexus/dist/lib';
-import { downloadNexusArtifact } from '../../../outil-nexus/dist/lib/downloadNexusArtifact';
+import NexusUtils from '../../../../outil-nexus/dist/lib';
+import { downloadNexusArtifact } from '../../../../outil-nexus/dist/lib/downloadNexusArtifact';
+import { TokenManager } from '../nexus/TokenManager';
 
 export class BinaryManager {
+  private tokenManager: TokenManager;
+
+  constructor() {
+    this.tokenManager = new TokenManager();
+  }
+
   /**
    * Configure l'environnement Nexus selon le mode (local/production)
    */
-  private setupNexusEnvironment(useLocal: boolean = false) {
+  private async setupNexusEnvironment(useLocal: boolean = false): Promise<void> {
     if (useLocal || process.env.NEXUS_LOCAL === 'true') {
       // Configuration locale
       process.env.NEXUS_URL = 'http://localhost:8081';
@@ -17,9 +24,21 @@ export class BinaryManager {
       process.env.NEXUS_PASSWORD = 'admin123';
       process.env.NEXUS_LOCAL = 'true';
     } else {
-      // Configuration production (par défaut)
+      // Configuration production - utiliser le TokenManager
       process.env.NEXUS_URL = 'https://nexus.maif.io';
-      // Les credentials doivent être dans ~/.nexus-utils/.env pour la production
+      
+      try {
+        // Récupérer l'authentification base64 depuis le TokenManager
+        const authToken = await this.tokenManager.getAuthToken();
+        
+        // Le token base64 contient déjà username:password encodé
+        // On peut l'utiliser directement pour l'authentification Basic
+        process.env.NEXUS_AUTH_TOKEN = authToken;
+        
+        console.log(chalk.blue('🔑 Authentification Nexus configurée'));
+      } catch (error) {
+        throw new Error(`Impossible de configurer l'authentification Nexus: ${error}`);
+      }
     }
   }
 
@@ -140,7 +159,7 @@ export class BinaryManager {
     format?: string
   ): Promise<string | null> {
 
-    this.setupNexusEnvironment();
+    await this.setupNexusEnvironment();
     
     // Utilise la librairie outil-nexus pour télécharger l'artefact
     // Structure: group = releases/snapshots, repository = react-metrics-artefacts
@@ -211,9 +230,7 @@ export class BinaryManager {
    */
   async downloadReactMetricsBinary(version?: string): Promise<string | null> {
     try {
-      this.setupNexusEnvironment();
-      
-      // D'abord vérifier si un binaire local existe déjà
+      // D'abord vérifier si un binaire local existe déjà AVANT de configurer Nexus
       if (!version) {
         const localBinary = this.checkLocalBinary();
         if (localBinary && fs.existsSync(localBinary)) {
@@ -221,6 +238,10 @@ export class BinaryManager {
           return localBinary;
         }
       }
+
+      // Seulement si on n'a pas de binaire local, configurer Nexus
+      console.log(chalk.blue('📦 Aucun binaire local trouvé, connexion à Nexus nécessaire...'));
+      await this.setupNexusEnvironment();
       
       // Si aucune version spécifiée, récupérer la dernière ou utiliser un fallback
       let targetVersion = version;

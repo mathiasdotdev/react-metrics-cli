@@ -2,150 +2,157 @@
 
 ![React-Metrics CLI Screenshot](./assets/react-metrics.png)
 
-CLI pour analyser le code mort dans les projets React/TypeScript en utilisant le binaire Go.
+Interface en ligne de commande TypeScript pour analyser le code mort dans les projets React/TypeScript. Télécharge et exécute automatiquement le binaire Go d'analyse depuis Nexus Repository.
 
-## 🚀 Installation
+## 📋 Table des matières
+
+- [🚀 Installation et démarrage rapide](#-installation-et-démarrage-rapide)
+- [📖 Utilisation](#-utilisation)  
+- [⚙️ Configuration](#️-configuration)
+- [🔐 Authentification sécurisée](#-authentification-sécurisée)
+- [✨ Fonctionnalités](#-fonctionnalités)
+- [🔧 Développement](#-développement)
+- [🔗 Intégration CI/CD](#-intégration-cicd)
+- [🚨 Dépannage](#-dépannage)
+- [📄 Licence et contribution](#-licence-et-contribution)
+
+## 🚀 Installation et démarrage rapide
+
+### Installation
 
 ```bash
 npm install -g react-metrics-cli
 ```
 
+### Premier lancement
+
+```bash
+# Analyse locale (aucune configuration requise si binaire local disponible)
+react-metrics analyze
+
+# Ou analyser un projet spécifique
+react-metrics analyze ./mon-projet-react
+
+# Pour télécharger depuis Nexus, les credentials seront demandés automatiquement
+```
+
+### Configuration optionnelle
+
+```bash
+# Voir la configuration actuelle et son emplacement
+react-metrics config
+
+# Initialiser le fichier de configuration avec les valeurs par défaut
+react-metrics config --init
+```
+
 ## 📖 Utilisation
 
-### Commande d'analyse (par défaut)
+### Commandes disponibles
+
+#### Analyse de code mort
 
 ```bash
 # Analyser le répertoire courant
-react-metrics
+react-metrics analyze
 
-# Analyser un projet spécifique
-react-metrics ./mon-projet-react
+# Analyser un projet spécifique  
+react-metrics analyze ./mon-projet-react
 
-# Analyser avec le mode debug
-react-metrics --debug
+# Mode debug avec logs détaillés
+react-metrics analyze --debug ./mon-projet-react
 
-# Forcer le téléchargement du binaire
-react-metrics --force
-
-# Spécifier un fichier de sortie pour les logs
-react-metrics --debug --output mon-rapport.log
+# Tests avec Nexus local
+react-metrics analyze --local
 ```
 
-### Options d'analyse
+| Option    | Description                                    |
+| --------- | ---------------------------------------------- |
+| `--debug` | Active le mode debug avec fichier de log      |
+| `--local` | Utilise Nexus local (localhost:8081)          |
 
-| Option            | Alias | Description                                              |
-| ----------------- | ----- | -------------------------------------------------------- |
-| `--debug`         | `-d`  | Active le mode debug (génère un fichier de log détaillé) |
-| `--output <file>` | `-o`  | Fichier de sortie pour les logs debug                    |
-| `--force`         | `-f`  | Force le téléchargement du binaire même s'il existe      |
-
-### Commandes de configuration
+#### Couverture de tests
 
 ```bash
-# Menu interactif de configuration
+# Analyser la couverture
+react-metrics coverage
+
+# Générer rapport HTML
+react-metrics coverage --html output/coverage/coverage.html
+```
+
+#### Configuration
+
+```bash
+# Afficher l'emplacement et l'aide
 react-metrics config
 
-# Afficher les informations de configuration
-react-metrics config --info
+# Voir la configuration actuelle
+react-metrics config --info  
 
-# Mettre à jour le binaire
-react-metrics config --update
-
-# Remettre à zéro la configuration
-react-metrics config --reset
+# Créer/réinitialiser la configuration
+react-metrics config --init
 ```
 
-### Aide
+#### Aide contextuelle
 
 ```bash
-# Afficher l'aide générale
-react-metrics --help
+# Aide générale avec diagnostic système
+react-metrics
 
-# Afficher l'aide détaillée
-react-metrics help
+# Aide d'une commande spécifique
+react-metrics analyze --help
 ```
 
 ## ⚙️ Configuration
 
-### Configuration .env pour Nexus
+### Fichier de configuration global
 
-**IMPORTANT**: Avant la première utilisation, configurez vos identifiants Nexus dans le fichier `$HOME/.nexus-utils/.env` :
+**Emplacement :** `$HOME/.nexus-utils/react-metrics.json`
+
+Le fichier permet de personnaliser :
+- Extensions de fichiers à analyser  
+- Dossiers ignorés (standards + personnalisés)
+- Types d'analyses activées
+- Formats de rapports (terminal, HTML, JSON)
+- Performances (nombre de goroutines)
+- Annotations `// react-metrics-ignore`
+
+**Usage :** Modifiez directement le fichier dans votre éditeur. Utilisez `react-metrics config` pour voir l'emplacement.
+
+### Emplacements des fichiers
+
+| Type | Emplacement | Description |
+|------|-------------|-------------|
+| **Configuration** | `~/.nexus-utils/react-metrics.json` | Paramètres de l'outil |
+| **Credentials** | `~/.nexus-utils/.credentials` | Credentials Nexus chiffrés |
+| **Binaires** | `~/.nexus-utils/artifacts/` | Binaires téléchargés |
+| **Système (fallback)** | `C:\react-metrics\` (Win) ou `/usr/local/react-metrics/` | Répertoires système |
+
+### Tests avec Nexus local
 
 ```bash
-# Créer le répertoire si nécessaire
-mkdir -p ~/.nexus-utils
-
-# Créer le fichier .env avec vos identifiants
-cat << EOF > ~/.nexus-utils/.env
-NEXUS_USERNAME=your-token-name
-NEXUS_PASSWORD=your-token-password
-EOF
-```
-
-Ces identifiants sont nécessaires pour télécharger les binaires depuis votre repository Nexus. Vous pouvez obtenir ces tokens depuis votre interface Nexus (cf: https://nexus.maif.io/#user/usertoken).
-
-### Tests locaux
-
-Pour tester avec une instance Nexus locale (`localhost:8081`), définir la variable d'environnement :
-
-```bash
-# Windows
-set NEXUS_LOCAL=true
-react-metrics download -v 1.0.0
-# Linux/macOS
+# Utiliser localhost:8081
 export NEXUS_LOCAL=true
-react-metrics download -v 1.0.0
+react-metrics analyze --local
 ```
 
-Ou utiliser les scripts de test fournis :
+## ✨ Fonctionnalités
 
-```bash
-# Windows
-.\test-local.bat
+### Configuration React-Metrics
 
-# Linux/macOS
-./test-local.sh
-```
+La CLI gère un fichier de configuration global dans `$HOME/.nexus-utils/react-metrics.json` qui permet de personnaliser :
 
-### Première utilisation
+- **Extensions de fichiers** à analyser (`.js`, `.jsx`, `.ts`, `.tsx`)
+- **Dossiers ignorés** (standards + personnalisés)
+- **Types d'analyses** (constantes, fonctions, classes, props, consoles, imports, dépendances)
+- **Rapports** (terminal, HTML, JSON)
+- **Performances** (nombre de goroutines)
+- **Annotations** (ignorer les commentaires `// react-metrics-ignore`)
 
-Lors de la première utilisation, la CLI utilisera automatiquement les identifiants configurés dans `.nexus-utils/.env` pour télécharger le binaire d'analyse.
+**Configuration simplifiée** : Utilisez `react-metrics config` pour voir le chemin du fichier et le modifier directement dans votre éditeur.
 
-### Chemins de stockage
-
-**⚠️ CHEMINS EXPLICITES - MODIFIEZ SELON VOS BESOINS**
-
-#### Windows
-
-- **Binaire** : `C:\react-metrics\react-metrics-windows-amd64.exe`
-- **Token chiffré** : `C:\react-metrics\nexus-token.enc`
-
-#### Linux/macOS
-
-- **Binaire** : `/usr/local/react-metrics/react-metrics-linux-amd64` (ou darwin)
-- **Token chiffré** : `/usr/local/react-metrics/nexus-token.enc`
-
-### Configuration Nexus
-
-**⚠️ CONFIGURATION NEXUS - MODIFIEZ DANS `src/config/constants.ts`**
-
-```typescript
-export const NEXUS_CONFIG = {
-  // URL de base de votre Nexus Repository
-  BASE_URL: 'https://nexus.maif.io/repository/react-metrics-binaries',
-
-  // Nom du repository dans Nexus
-  REPOSITORY: 'react-metrics-binaries',
-
-  // Version du binaire à télécharger
-  VERSION: '1.0.0',
-
-  // Groupe/namespace du binaire
-  GROUP: 'com.company.react-metrics',
-}
-```
-
-## 🔍 Types de code mort détectés
+### Types de code mort détectés
 
 La CLI utilise le binaire Go pour détecter :
 
@@ -155,7 +162,7 @@ La CLI utilise le binaire Go pour détecter :
 - **Appels console** : `console.log`, `console.warn`, etc.
 - **Props React non utilisées** : Props destructurées non utilisées
 
-## 📊 Exemple de sortie
+### Exemple de sortie
 
 ```bash
 🚀 React-Metrics - Analyse de code mort
@@ -174,6 +181,7 @@ Fichier: ../src/utils/helpers.ts:10:1
 Total: 2 éléments de code mort détectés
 
 ✅ Analyse terminée avec succès en 1250ms
+📝 Logs debug disponibles dans: output/logs/react-metrics-debug.log
 ```
 
 ## 🔧 Développement
@@ -189,7 +197,7 @@ Total: 2 éléments de code mort détectés
 npm install
 ```
 
-### Scripts de développement
+### Scripts disponibles
 
 ```bash
 # Compilation TypeScript
@@ -198,140 +206,92 @@ npm run build
 # Développement avec rechargement automatique
 npm run dev
 
-# Tests
+# Tests unitaires et d'intégration (Vitest)
 npm run test
+
+# Tests en mode watch
+npm run test:watch
+
+# Tests avec coverage
+npm run test:coverage
+
+# Interface web pour les tests
+npm run test:ui
+
+# Tests d'intégration CLI uniquement
+npm run test:integration
+
+# Tests unitaires uniquement
+npm run test:unit
 
 # Démarrage de la CLI compilée
 npm start
 ```
 
-### Structure du projet
+### Architecture modulaire
 
 ```
 react-metrics-cli/
 ├── src/
-│   ├── config/
-│   │   └── constants.ts          # Configuration Nexus et chemins
-│   ├── utils/
-│   │   ├── tokenManager.ts       # Gestion des tokens chiffrés
-│   │   ├── binaryManager.ts      # Téléchargement et gestion du binaire
-│   │   └── binaryExecutor.ts     # Exécution du binaire Go
-│   ├── commands/
-│   │   ├── analyze.ts            # Commande d'analyse
-│   │   └── config.ts             # Commande de configuration
-│   └── index.ts                  # Point d'entrée CLI
-├── dist/                         # Code compilé
-├── package.json
-├── tsconfig.json
-└── README.md
+│   ├── commands/           # Commandes CLI (Analyze, Coverage, Config)
+│   ├── core/              # Logique métier
+│   │   ├── binary/        # Gestion des binaires (Manager, Executor)
+│   │   ├── config/        # Configuration globale (ConfigManager, System)
+│   │   └── nexus/         # Interaction Nexus (TokenManager)
+│   ├── ui/                # Interface utilisateur
+│   │   ├── display/       # Affichage (HelpDisplay, LogoDisplay)
+│   │   └── wrapper/       # Wrappers Commander
+│   └── system/            # Diagnostics système
+├── dist/                  # Code compilé
+└── package.json          # Configuration projet
 ```
 
-## 🔐 Sécurité
-
-### Chiffrement du token
-
-Le token Nexus est chiffré avec AES avant d'être stocké localement. La clé de chiffrement peut être modifiée dans `src/config/constants.ts` :
-
-```typescript
-export const ENCRYPTION_CONFIG = {
-  SECRET_KEY: 'react-metrics-secret-key-2024',
-  ALGORITHM: 'AES',
-}
-```
-
-### Validation du token
-
-La CLI valide automatiquement le token lors du téléchargement. En cas d'échec (401), elle demande un nouveau token.
-
-## 🚨 Dépannage
-
-### Erreurs courantes
-
-#### "Token Nexus invalide ou expiré"
-
-```bash
-# Supprimer le token et en saisir un nouveau
-react-metrics config --reset
-```
-
-#### "Binaire non trouvé sur Nexus"
-
-- Vérifiez la configuration Nexus dans `constants.ts`
-- Vérifiez que le binaire existe sur votre serveur Nexus
-- Vérifiez les permissions d'accès
-
-#### "Impossible de télécharger le binaire"
-
-- Vérifiez votre connexion internet
-- Vérifiez les permissions d'écriture dans le répertoire de destination
-- Essayez avec `--force` pour forcer le téléchargement
-
-#### Permissions insuffisantes (Linux/macOS)
-
-```bash
-# Donner les permissions d'exécution
-sudo chmod +x /usr/local/react-metrics/react-metrics-*
-
-# Ou changer le répertoire de destination dans constants.ts
-```
-
-### Logs de debug
-
-Utilisez le mode debug pour obtenir plus d'informations :
-
-```bash
-react-metrics --debug --output debug.log
-```
-
-### Informations de configuration
-
-```bash
-react-metrics config --info
-```
 
 ## 🔗 Intégration CI/CD
 
-### Jenkins
-
+**Jenkins**
 ```groovy
 pipeline {
     agent any
     stages {
         stage('Analyse Code Mort') {
             steps {
-                sh 'npx react-metrics-cli .'
+                sh 'npx react-metrics-cli analyze .'
             }
         }
     }
 }
 ```
 
-### GitHub Actions
-
+**GitHub Actions**
 ```yaml
 - name: Analyse du code mort
   run: |
     npm install -g react-metrics-cli
-    react-metrics .
+    react-metrics analyze .
 ```
 
-### Variables d'environnement
+## 🚨 Dépannage
 
-Vous pouvez configurer le token via une variable d'environnement :
+### Erreurs courantes
+
+| Erreur | Solution |
+|--------|----------|
+| **Token invalide** | Supprimer `~/.nexus-utils/.credentials` |
+| **Binaire non trouvé** | Vérifier permissions Nexus |
+| **Téléchargement impossible** | Vérifier connexion/permissions |
+| **Permissions insuffisantes** | `chmod +x` sur le binaire |
+
+### Diagnostic
 
 ```bash
-export NEXUS_TOKEN="votre-token"
-react-metrics
+# Mode debug
+react-metrics analyze --debug
+
+# Info configuration  
+react-metrics config --info
 ```
 
-## 📝 Licence
+## 📄 License
 
-MIT
-
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créer une branche feature (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Commit les changements (`git commit -am 'Ajouter nouvelle fonctionnalité'`)
-4. Push vers la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Créer une Pull Request
+MIT License - voir [LICENSE](LICENSE) pour plus de détails.

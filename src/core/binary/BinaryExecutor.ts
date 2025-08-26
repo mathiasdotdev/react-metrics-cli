@@ -1,12 +1,14 @@
 import chalk from 'chalk';
 import { ChildProcess, spawn } from 'child_process';
 import ora from 'ora';
-import { TIMEOUTS } from '../config/constants';
+import { TIMEOUTS } from '../config/System';
 
 export interface ExecutionOptions {
+  command?: string;
   projectPath?: string;
   debug?: boolean;
   outputFile?: string;
+  htmlOutput?: string;
   help?: boolean;
 }
 
@@ -43,10 +45,7 @@ export class BinaryExecutor {
       const duration = Date.now() - startTime;
       
       if (result.success) {
-        spinner.stopAndPersist({
-          symbol: chalk.green('✅'),
-          text: chalk.green(`Analyse terminée en ${duration}ms`)
-        });
+        spinner.stop();
       } else {
         spinner.stopAndPersist({
           symbol: chalk.red('❌'),
@@ -73,9 +72,11 @@ export class BinaryExecutor {
   private buildArguments(options: ExecutionOptions): string[] {
     const args: string[] = [];
 
-    // Commande principale (par défaut: analyser)
-    if (!options.help) {
-      args.push('analyser');
+    // Commande principale 
+    if (options.help) {
+      args.push('--help');
+    } else {
+      args.push(options.command || 'analyser');
     }
 
     // Chemin du projet
@@ -88,14 +89,14 @@ export class BinaryExecutor {
       args.push('--debug');
     }
 
-    // Fichier de sortie
+    // Fichier de sortie pour debug
     if (options.outputFile) {
       args.push('--sortie', options.outputFile);
     }
 
-    // Aide
-    if (options.help) {
-      args.push('--help');
+    // Sortie HTML pour coverage
+    if (options.htmlOutput) {
+      args.push('--html', options.htmlOutput);
     }
 
     return args;
@@ -206,9 +207,8 @@ export class BinaryExecutor {
       debug
     };
 
-    if (debug) {
-      options.outputFile = 'react-metrics-debug.log';
-    }
+    // Ne pas surcharger outputFile, laisser le binaire utiliser ses valeurs par défaut
+    // Le binaire Go utilise "output/logs/react-metrics-debug.log" par défaut
 
     return this.execute(options);
   }

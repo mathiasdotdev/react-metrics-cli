@@ -6,15 +6,13 @@ const BINARY_ROOT_DIR = process.platform === 'win32'
     ? 'C:\\react-metrics'
     : '/usr/local/react-metrics';
 
+const NEXUS_UTILS_DIR = path.join(os.homedir(), '.nexus-utils');
+
 export const STORAGE_PATHS = {
   BINARY_ROOT_DIR,
   BINARY_FILENAME: getBinaryFilename(BINARY_ROOT_DIR),
-  TOKEN_FILE: process.platform === 'win32'
-      ? 'C:\\react-metrics\\nexus-token.enc'
-      : '/usr/local/react-metrics/nexus-token.enc',
-  CONFIG_FILE: process.platform === 'win32'
-      ? 'C:\\react-metrics\\nexus-config.enc'
-      : '/usr/local/react-metrics/nexus-config.enc',
+  TOKEN_FILE: path.join(NEXUS_UTILS_DIR, 'nexus-token.enc'),
+  CONFIG_FILE: path.join(NEXUS_UTILS_DIR, 'nexus-config.enc'),
   CACHE_DIR: path.join(os.homedir(), '.react-metrics-cache')
 };
 

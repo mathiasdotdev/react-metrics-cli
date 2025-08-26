@@ -6,6 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 React-Metrics CLI is a TypeScript-based command-line tool for analyzing dead code in React/TypeScript projects. The CLI downloads and executes a Go binary from Nexus Repository to perform the actual analysis.
 
+It's imperative to build BEFORE running any analysis. It prevents errors and ensures the binary is up to date. Always update the CHANGELOG.md file and the package.json version when you make changes, and don't forget to check the previous version to see what has changed, so that you don't repeat yourself.
+
+In Added, you only put new features that don't exist in the previous version. In Changed, you only put changes that exist in the previous version. In Fixed, you only put fixes that exist in the previous version. In Technical, you only put technical changes that don't exist in the previous version. On each version, I want you to be brief and to the point (don't add too many details).
+
 ## Architecture
 
 ### Core Components
@@ -24,7 +28,7 @@ React-Metrics CLI is a TypeScript-based command-line tool for analyzing dead cod
   - `BinaryExecutor`: Executes the Go binary with proper argument parsing and output handling
   - `TokenManager`: Encrypts/decrypts and manages Nexus authentication tokens using AES
 
-- **Configuration** (`src/config/constants.ts`): Platform-specific paths and configuration constants
+- **Configuration** (`src/core/config/system.ts`): Platform-specific paths and system constants
 
 ### Key Dependencies
 
@@ -82,10 +86,6 @@ react-metrics config --reset
 
 - The project uses Node.js 18+ and TypeScript 5.3+
 - Jenkins pipeline configured for Node.js 22 with npm
-- Binary paths and Nexus configuration are hardcoded in `constants.ts` and need customization per environment
-- Token encryption uses a hardcoded secret key in `constants.ts` that should be changed for production
+- Binary paths and Nexus configuration are hardcoded in `system.ts` and need customization per environment
+- Token encryption uses a hardcoded secret key in `system.ts` that should be changed for production
 - The analyze command expects a Go binary with specific command-line arguments (`analyser --chemin --debug --sortie`)
-
-## Testing and Linting
-
-The project includes Jest for testing but specific test/lint commands should be verified in the codebase as they may differ from standard configurations.
