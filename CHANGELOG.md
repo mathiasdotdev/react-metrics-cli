@@ -2,6 +2,13 @@
 
 ## [Non publiée]
 
+## [1.13.0] - 29/08/2025
+
+### Added
+
+- **Fichier CONTRIBUTING.md** : Guide de contribution manquant avec workflow TypeScript/Node.js adapté au projet
+- **Section contribution README.md** : Lien vers CONTRIBUTING.md pour améliorer la visibilité
+
 ## [1.12.0] - 28/08/2025
 
 ### Fixed
@@ -87,7 +94,7 @@
 ### Technical
 - **Réorganisation arborescence** : Structure modulaire avec dossiers thématiques
   - `core/` : Logique métier (binary, nexus)
-  - `ui/` : Interface utilisateur (display, wrapper)  
+  - `ui/` : Interface utilisateur (display, wrapper)
   - `system/` : Diagnostics système
 - **Tests co-localisés** : Dossiers `__tests__` à côté du code source
 - **Migration Jest → Vitest** : Résout les problèmes ESM/CommonJS, plus rapide
@@ -104,9 +111,9 @@
 - **Aide contextuelle intelligente** : Diagnostic automatique de l'état système (credentials, binaires)
 - **Module SystemDiagnostic** : Messages d'aide adaptatifs selon la configuration
 
-### Fixed  
+### Fixed
 - **Menu configuration Inquirer** : Correction erreur `inquirer.prompt is not a function`
-- **Détection binaires** : Support cache utilisateur `~/.nexus-utils/artifacts/` 
+- **Détection binaires** : Support cache utilisateur `~/.nexus-utils/artifacts/`
 - **Affichage problèmes multiples** : Toutes les solutions affichées simultanément
 
 ### Changed
