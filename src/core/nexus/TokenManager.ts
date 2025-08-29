@@ -1,24 +1,21 @@
-import chalk from 'chalk'
 import * as CryptoJS from 'crypto-js'
 import * as fs from 'fs-extra'
 import * as inquirer from 'inquirer'
-import { ENCRYPTION_CONFIG, STORAGE_PATHS } from '../config/System'
+import * as os from 'os'
+import * as path from 'path'
+import { Logger } from '../../ui/logger/Logger'
 
 interface NexusCredentials {
-  username: string
-  password: string
+  base64Token: string
+  attemptCount: number
 }
 
 export class TokenManager {
   private credentialsFilePath: string
-  private secretKey: string
 
   constructor() {
-    this.credentialsFilePath = STORAGE_PATHS.TOKEN_FILE.replace(
-      'nexus-token.enc',
-      'nexus.credentials'
-    )
-    this.secretKey = ENCRYPTION_CONFIG.SECRET_KEY
+    const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils')
+    this.credentialsFilePath = path.join(nexusUtilsDir, '.credentials')
   }
 
   /**
@@ -28,7 +25,7 @@ export class TokenManager {
     try {
       // Vérifier si les credentials chiffrés existent
       if (await this.credentialsExist()) {
-        console.log(chalk.blue('🔑 Credentials Nexus trouvés dans le cache...'))
+        Logger.credentials('Credentials Nexus trouvés dans le cache...')
 
         // Demander le mot de passe maître pour déchiffrer
         const masterPassword = await this.promptForMasterPassword(
@@ -40,62 +37,63 @@ export class TokenManager {
             masterPassword
           )
 
-          // Générer le token base64
-          const authToken = this.generateBase64Auth(
-            credentials.username,
-            credentials.password
-          )
-
-          // Vérifier si les credentials sont valides (optionnel)
-          if (await this.validateAuthToken(authToken)) {
-            return authToken
+          // Vérifier si les credentials sont valides et gérer les tentatives
+          if (await this.validateAuthToken(credentials.base64Token)) {
+            // Réinitialiser le compteur de tentatives en cas de succès
+            if (credentials.attemptCount > 0) {
+              credentials.attemptCount = 0
+              await this.saveEncryptedCredentials(credentials, masterPassword)
+            }
+            return credentials.base64Token
           } else {
-            console.log(
-              chalk.yellow(
-                '⚠️  Credentials invalides, demande de nouveaux credentials...'
-              )
+            credentials.attemptCount = (credentials.attemptCount || 0) + 1
+            Logger.warn(
+              `Credentials invalides (tentative ${credentials.attemptCount}/3)...`
             )
-            await this.deleteCredentials()
+
+            if (credentials.attemptCount >= 3) {
+              Logger.error(
+                'Nombre maximum de tentatives atteint, suppression des credentials'
+              )
+              await this.deleteCredentials()
+            } else {
+              await this.saveEncryptedCredentials(credentials, masterPassword)
+              return this.getAuthToken() // Retry
+            }
           }
         } catch (decryptError) {
-          console.log(
-            chalk.red(
-              '❌ Mot de passe de déchiffrement incorrect ou credentials corrompus'
-            )
+          Logger.error(
+            'Mot de passe de déchiffrement incorrect ou credentials corrompus'
           )
-          console.log(
-            chalk.yellow('💡 Suppression des credentials existants...')
-          )
+          Logger.cleanup('Suppression des credentials existants...')
           await this.deleteCredentials()
         }
       }
 
-      // Demander les credentials à l'utilisateur
-      const credentials = await this.promptForCredentials()
+      // Demander le token base64 à l'utilisateur
+      const base64Token = await this.promptForBase64Token()
 
       // Demander le mot de passe maître pour chiffrer
       const masterPassword = await this.promptForMasterPassword(
         'Mot de passe pour chiffrer les credentials:'
       )
 
+      // Créer l'objet credentials avec compteur initialisé
+      const credentials: NexusCredentials = {
+        base64Token,
+        attemptCount: 0,
+      }
+
       // Sauvegarder les credentials chiffrés avec le mot de passe maître
       await this.saveEncryptedCredentials(credentials, masterPassword)
 
       // Retourner le token base64
-      return this.generateBase64Auth(credentials.username, credentials.password)
+      return base64Token
     } catch (error) {
       throw new Error(
         `Erreur lors de la récupération de l'authentification: ${error}`
       )
     }
-  }
-
-  /**
-   * Génère un token d'authentification base64 depuis username:password
-   */
-  private generateBase64Auth(username: string, password: string): string {
-    const credentials = `${username}:${password}`
-    return Buffer.from(credentials, 'utf8').toString('base64')
   }
 
   /**
@@ -130,7 +128,7 @@ export class TokenManager {
       const credentials = JSON.parse(decryptedCredentials) as NexusCredentials
 
       // Vérifier que les credentials ont la structure attendue
-      if (!credentials.username || !credentials.password) {
+      if (!credentials.base64Token) {
         throw new Error('Structure des credentials invalide')
       }
 
@@ -152,7 +150,8 @@ export class TokenManager {
   ): Promise<void> {
     try {
       // Créer le répertoire si nécessaire
-      await fs.ensureDir(STORAGE_PATHS.BINARY_ROOT_DIR)
+      const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils')
+      await fs.ensureDir(nexusUtilsDir)
 
       // Sérialiser et chiffrer les credentials avec le mot de passe maître
       const credentialsJson = JSON.stringify(credentials)
@@ -164,13 +163,9 @@ export class TokenManager {
       // Sauvegarder dans le fichier
       await fs.writeFile(this.credentialsFilePath, encryptedCredentials, 'utf8')
 
-      console.log(
-        chalk.green('✅ Credentials sauvegardés de manière sécurisée')
-      )
-      console.log(
-        chalk.gray(
-          '💡 Votre mot de passe sera demandé à chaque interaction avec Nexus'
-        )
+      Logger.success('Credentials sauvegardés de manière sécurisée')
+      Logger.info(
+        'Votre mot de passe sera demandé à chaque interaction avec Nexus'
       )
     } catch (error) {
       throw new Error(`Erreur lors de la sauvegarde des credentials: ${error}`)
@@ -203,62 +198,54 @@ export class TokenManager {
   }
 
   /**
-   * Demande les credentials à l'utilisateur
+   * Demande le token base64 depuis Nexus User Token à l'utilisateur
    */
-  private async promptForCredentials(): Promise<NexusCredentials> {
-    console.log(chalk.cyan('\n🔐 Configuration des credentials Nexus'))
-    console.log(
-      chalk.gray(
-        'Vos credentials seront chiffrés et stockés localement pour les prochaines utilisations.'
-      )
+  private async promptForBase64Token(): Promise<string> {
+    Logger.settings('Configuration du token Nexus')
+    Logger.info(
+      'Récupérez votre token depuis Nexus > User Token (format base64 user:password)'
     )
-    console.log(
-      chalk.gray(
-        "Un token d'authentification base64 sera généré automatiquement.\n"
-      )
+    Logger.info(
+      'Le token sera chiffré et stocké localement de manière sécurisée.'
     )
+    Logger.newLine()
 
-    const answers = await inquirer.default.prompt([
-      {
-        type: 'input',
-        name: 'username',
-        message: "Nom d'utilisateur Nexus:",
-        validate: (input: string) => {
-          if (!input || input.trim().length === 0) {
-            return "Le nom d'utilisateur ne peut pas être vide"
-          }
-          return true
-        },
-      },
+    const answer = await inquirer.default.prompt([
       {
         type: 'password',
-        name: 'password',
-        message: 'Mot de passe Nexus:',
+        name: 'base64Token',
+        message: 'Base64 token depuis Nexus User Token:',
         mask: '*',
         validate: (input: string) => {
           if (!input || input.trim().length === 0) {
-            return 'Le mot de passe ne peut pas être vide'
+            return 'Le token ne peut pas être vide'
           }
-          return true
+
+          // Vérifier que c'est une base64 valide
+          try {
+            const decoded = Buffer.from(input.trim(), 'base64').toString('utf8')
+            if (!decoded.includes(':') || decoded.split(':').length !== 2) {
+              return 'Le token doit être au format base64 contenant user:password'
+            }
+            return true
+          } catch {
+            return 'Format base64 invalide'
+          }
         },
       },
     ])
 
-    return {
-      username: answers.username.trim(),
-      password: answers.password,
-    }
+    return answer.base64Token.trim()
   }
 
   /**
-   * Valide le token d'authentification en faisant un appel test à Nexus
+   * Valide le token d'authentification base64
    */
   private async validateAuthToken(authToken: string): Promise<boolean> {
-    // TODO: Implémenter la validation du token avec un appel à Nexus
-    // Pour l'instant, on considère que le token est valide s'il existe et a la bonne structure base64
     try {
       const decoded = Buffer.from(authToken, 'base64').toString('utf8')
-      return decoded.includes(':') && decoded.split(':').length === 2
+      const parts = decoded.split(':')
+      return parts.length === 2 && parts[0].length > 0 && parts[1].length > 0
     } catch {
       return false
     }
@@ -271,12 +258,10 @@ export class TokenManager {
     try {
       if (await this.credentialsExist()) {
         await fs.remove(this.credentialsFilePath)
-        console.log(chalk.yellow('🗑️  Credentials supprimés'))
+        Logger.cleanup('Credentials supprimés')
       }
     } catch (error) {
-      console.error(
-        chalk.red(`Erreur lors de la suppression des credentials: ${error}`)
-      )
+      Logger.error(`Erreur lors de la suppression des credentials: ${error}`)
     }
   }
 
@@ -288,43 +273,24 @@ export class TokenManager {
       if (await this.credentialsExist()) {
         const stats = await fs.stat(this.credentialsFilePath)
 
-        console.log(chalk.blue('📋 Informations des credentials:'))
-        console.log(chalk.gray(`   Fichier: ${this.credentialsFilePath}`))
-        console.log(chalk.gray(`   Modifié: ${stats.mtime.toLocaleString()}`))
-        console.log(chalk.gray(`   Taille: ${stats.size} bytes`))
-        console.log(
-          chalk.yellow(
-            '⚠️   Credentials chiffrés - mot de passe requis pour les consulter'
-          )
+        Logger.credentials('Informations des credentials:')
+        Logger.list(`Fichier: ${this.credentialsFilePath}`)
+        Logger.list(`Modifié: ${stats.mtime.toLocaleString()}`)
+        Logger.list(`Taille: ${stats.size} bytes`)
+        Logger.warn(
+          'Credentials chiffrés - mot de passe requis pour les consulter'
         )
-        console.log(
-          chalk.gray(
-            "💡   Utilisez la commande d'analyse avec Nexus pour tester l'authentification"
-          )
+        Logger.warn(
+          "Utilisez la commande d'analyse avec Nexus pour tester l'authentification"
         )
       } else {
-        console.log(chalk.yellow('❌ Aucun credentials trouvés'))
-        console.log(
-          chalk.gray(
-            '💡 Utilisez une commande nécessitant Nexus pour configurer les credentials'
-          )
+        Logger.error('Aucun credentials trouvés')
+        Logger.warn(
+          'Utilisez une commande nécessitant Nexus pour configurer les credentials'
         )
       }
     } catch (error) {
-      console.error(
-        chalk.red(`Erreur lors de la lecture des informations: ${error}`)
-      )
+      Logger.error(`Erreur lors de la lecture des informations: ${error}`)
     }
-  }
-
-  /**
-   * Méthode de compatibilité pour l'ancien système de tokens
-   * @deprecated Utiliser getAuthToken() à la place
-   */
-  async getToken(): Promise<string> {
-    console.log(
-      chalk.yellow('⚠️  getToken() est déprécié, utilisez getAuthToken()')
-    )
-    return this.getAuthToken()
   }
 }

@@ -7,7 +7,7 @@ Interface en ligne de commande TypeScript pour analyser le code mort dans les pr
 ## 📋 Table des matières
 
 - [🚀 Installation et démarrage rapide](#-installation-et-démarrage-rapide)
-- [📖 Utilisation](#-utilisation)  
+- [📖 Utilisation](#-utilisation)
 - [⚙️ Configuration](#️-configuration)
 - [🔐 Authentification sécurisée](#-authentification-sécurisée)
 - [✨ Fonctionnalités](#-fonctionnalités)
@@ -56,7 +56,7 @@ react-metrics config --init
 # Analyser le répertoire courant
 react-metrics analyze
 
-# Analyser un projet spécifique  
+# Analyser un projet spécifique
 react-metrics analyze ./mon-projet-react
 
 # Mode debug avec logs détaillés
@@ -66,10 +66,10 @@ react-metrics analyze --debug ./mon-projet-react
 react-metrics analyze --local
 ```
 
-| Option    | Description                                    |
-| --------- | ---------------------------------------------- |
-| `--debug` | Active le mode debug avec fichier de log      |
-| `--local` | Utilise Nexus local (localhost:8081)          |
+| Option    | Description                              |
+| --------- | ---------------------------------------- |
+| `--debug` | Active le mode debug avec fichier de log |
+| `--local` | Utilise Nexus local (localhost:8081)     |
 
 #### Couverture de tests
 
@@ -88,11 +88,32 @@ react-metrics coverage --html output/coverage/coverage.html
 react-metrics config
 
 # Voir la configuration actuelle
-react-metrics config --info  
+react-metrics config --info
 
 # Créer/réinitialiser la configuration
 react-metrics config --init
 ```
+
+#### Upload vers Nexus
+
+```bash
+# Upload des binaires (mode dry-run par défaut)
+react-metrics upload -v 1.0.0
+
+# Upload réel vers Nexus
+react-metrics upload -v 1.0.0 --no-dry-run
+
+# Upload avec options personnalisées
+react-metrics upload -v 1.0.0 -r mon-repository -u http://nexus.local:8081 --no-dry-run
+```
+
+| Option             | Description                                   | Défaut                    |
+| ------------------ | --------------------------------------------- | ------------------------- |
+| `-v, --version`    | Version des binaires à uploader (obligatoire) | -                         |
+| `-r, --repository` | Repository Nexus cible                        | `react-metrics-artefacts` |
+| `-u, --nexus-url`  | URL du serveur Nexus                          | `http://localhost:8081`   |
+| `--dry-run`        | Simulation uniquement (par défaut)            | `true`                    |
+| `--no-dry-run`     | Upload réel vers Nexus                        | -                         |
 
 #### Aide contextuelle
 
@@ -104,6 +125,46 @@ react-metrics
 react-metrics analyze --help
 ```
 
+## 🔐 Authentification sécurisée
+
+### Configuration simplifiée des credentials
+
+React-Metrics CLI utilise un système d'authentification sécurisé simplifié :
+
+**📝 Étape 1** : Récupérez votre token depuis Nexus
+
+- Connectez-vous à Nexus Repository
+- Allez dans **User Token**
+- Copiez le token base64 (format `user:password` encodé)
+
+**🔒 Étape 2** : Configuration automatique
+
+```bash
+# Premier lancement - les credentials seront demandés automatiquement
+react-metrics analyze
+
+# Ou configuration explicite
+react-metrics config --credentials
+```
+
+**🛡️ Sécurité**
+
+- Token chiffré avec AES et mot de passe maître
+- Stockage sécurisé dans `~/.nexus-utils/.credentials`
+- Système de retry intelligent (3 tentatives)
+- Régénération automatique en cas d'échecs répétés
+
+### Variables d'environnement
+
+Personnalisez la configuration avec un fichier `.env` :
+
+```bash
+# Copiez .env.example vers .env et personnalisez les valeurs
+cp .env.example .env
+```
+
+Voir `.env.example` pour la liste complète des variables disponibles.
+
 ## ⚙️ Configuration
 
 ### Fichier de configuration global
@@ -111,7 +172,8 @@ react-metrics analyze --help
 **Emplacement :** `$HOME/.nexus-utils/react-metrics.json`
 
 Le fichier permet de personnaliser :
-- Extensions de fichiers à analyser  
+
+- Extensions de fichiers à analyser
 - Dossiers ignorés (standards + personnalisés)
 - Types d'analyses activées
 - Formats de rapports (terminal, HTML, JSON)
@@ -122,12 +184,12 @@ Le fichier permet de personnaliser :
 
 ### Emplacements des fichiers
 
-| Type | Emplacement | Description |
-|------|-------------|-------------|
-| **Configuration** | `~/.nexus-utils/react-metrics.json` | Paramètres de l'outil |
-| **Credentials** | `~/.nexus-utils/.credentials` | Credentials Nexus chiffrés |
-| **Binaires** | `~/.nexus-utils/artifacts/` | Binaires téléchargés |
-| **Système (fallback)** | `C:\react-metrics\` (Win) ou `/usr/local/react-metrics/` | Répertoires système |
+| Type              | Emplacement                         | Description                |
+| ----------------- | ----------------------------------- | -------------------------- |
+| **Configuration** | `~/.nexus-utils/react-metrics.json` | Paramètres de l'outil      |
+| **Credentials**   | `~/.nexus-utils/.credentials`       | Credentials Nexus chiffrés |
+| **Binaires**      | `~/.nexus-utils/artifacts/`         | Binaires téléchargés       |
+| **Cache**         | `~/.nexus-utils/cache/`             | Fichiers temporaires       |
 
 ### Tests avec Nexus local
 
@@ -188,7 +250,7 @@ Total: 2 éléments de code mort détectés
 
 ### Prérequis
 
-- Node.js 16+
+- Node.js 22.14.0+
 - npm ou yarn
 
 ### Installation des dépendances
@@ -202,6 +264,15 @@ npm install
 ```bash
 # Compilation TypeScript
 npm run build
+
+# Build optimisé pour la production
+npm run build:prod
+
+# Analyse de la taille du bundle
+npm run build:analyze
+
+# Nettoyage du répertoire dist
+npm run clean
 
 # Développement avec rechargement automatique
 npm run dev
@@ -228,28 +299,40 @@ npm run test:unit
 npm start
 ```
 
+### ⚠️ Note importante sur les versions
+
+Lors de l'incrémentation de version, pensez à mettre à jour **3 fichiers** :
+
+- `package.json` - Version principale
+- `CHANGELOG.md` - Nouvelle entrée avec les modifications
+- `src/__tests__/integration/cli-basic.test.ts` - Test d'expectation de version (le test s'appelle `should display version when --version flag is used`)
+
 ### Architecture modulaire
 
-```
+```bash
 react-metrics-cli/
 ├── src/
-│   ├── commands/           # Commandes CLI (Analyze, Coverage, Config)
+│   ├── commands/           # Commandes CLI (Analyze, Coverage, Config, Download, Upload)
 │   ├── core/              # Logique métier
 │   │   ├── binary/        # Gestion des binaires (Manager, Executor)
 │   │   ├── config/        # Configuration globale (ConfigManager, System)
 │   │   └── nexus/         # Interaction Nexus (TokenManager)
 │   ├── ui/                # Interface utilisateur
 │   │   ├── display/       # Affichage (HelpDisplay, LogoDisplay)
+│   │   ├── logger/        # Système de logging centralisé
 │   │   └── wrapper/       # Wrappers Commander
 │   └── system/            # Diagnostics système
+├── scripts/               # Scripts d'optimisation et d'analyse
 ├── dist/                  # Code compilé
-└── package.json          # Configuration projet
+├── .env                   # Variables d'environnement
+├── tsconfig.prod.json     # Configuration TypeScript pour production
+└── BUILD_OPTIMIZATION.md  # Guide d'optimisation du build
 ```
-
 
 ## 🔗 Intégration CI/CD
 
 **Jenkins**
+
 ```groovy
 pipeline {
     agent any
@@ -264,6 +347,7 @@ pipeline {
 ```
 
 **GitHub Actions**
+
 ```yaml
 - name: Analyse du code mort
   run: |
@@ -275,12 +359,12 @@ pipeline {
 
 ### Erreurs courantes
 
-| Erreur | Solution |
-|--------|----------|
-| **Token invalide** | Supprimer `~/.nexus-utils/.credentials` |
-| **Binaire non trouvé** | Vérifier permissions Nexus |
-| **Téléchargement impossible** | Vérifier connexion/permissions |
-| **Permissions insuffisantes** | `chmod +x` sur le binaire |
+| Erreur                        | Solution                                |
+| ----------------------------- | --------------------------------------- |
+| **Token invalide**            | Supprimer `~/.nexus-utils/.credentials` |
+| **Binaire non trouvé**        | Vérifier permissions Nexus              |
+| **Téléchargement impossible** | Vérifier connexion/permissions          |
+| **Permissions insuffisantes** | `chmod +x` sur le binaire               |
 
 ### Diagnostic
 
@@ -288,7 +372,7 @@ pipeline {
 # Mode debug
 react-metrics analyze --debug
 
-# Info configuration  
+# Info configuration
 react-metrics config --info
 ```
 

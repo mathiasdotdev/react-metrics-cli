@@ -1,6 +1,6 @@
 {
   "name": "react-metrics-cli",
-  "version": "1.8.0",
+  "version": "1.12.0",
   "description": "CLI pour analyser le code mort dans les projets React",
   "main": "dist/index.js",
   "bin": {
@@ -8,15 +8,18 @@
   },
   "scripts": {
     "build": "npx tsc",
+    "build:prod": "npx tsc --project tsconfig.prod.json",
+    "build:analyze": "npm run build:prod && node scripts/analyze-bundle.js",
     "dev": "npx ts-node src/index.ts",
     "start": "node dist/index.js",
+    "clean": "node -e \"require('fs').rmSync('./dist', {recursive: true, force: true})\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:integration": "vitest run src/__tests__/integration",
     "test:unit": "vitest run src/commands/__tests__",
     "test:ui": "vitest --ui",
-    "prepublishOnly": "npm run build && npm run test"
+    "prepublishOnly": "npm run clean && npm run build:prod && npm run test"
   },
   "keywords": [
     "react",
@@ -51,5 +54,12 @@
   },
   "engines": {
     "node": ">=22.14.0"
-  }
+  },
+  "files": [
+    "dist/**/*",
+    "package.json",
+    "README.md",
+    "LICENCE",
+    ".env.example"
+  ]
 }

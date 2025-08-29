@@ -1,0 +1,46 @@
+# Development files
+src/
+scripts/
+*.test.ts
+**/__tests__/
+**/*.test.ts
+**/*.test.js
+
+# Configuration files
+tsconfig.json
+tsconfig.prod.json
+vitest.config.ts
+.env
+.env.example
+
+# Build artifacts
+*.tsbuildinfo
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+output/
+
+# Development dependencies
+node_modules/
+
+# Git files
+.git/
+.gitignore
+
+# CI/CD files
+Jenkinsfile
+
+# Documentation (keep only essential)
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Keep only essential files in published package
+# The package.json "files" field will take precedence

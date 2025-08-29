@@ -14,13 +14,18 @@ In Added, you only put new features that don't exist in the previous version. In
 
 ### Core Components
 
-- **CLI Entry Point** (`src/index.ts`): Commander.js-based CLI with three main commands:
+- **CLI Entry Point** (`src/index.ts`): Commander.js-based CLI with five main commands:
   - `analyze` (default): Analyzes React projects for dead code
+  - `coverage`: Analyzes test coverage with HTML reports
   - `download`: Downloads Nexus artifacts with custom parameters
+  - `upload`: Uploads binaries to Nexus Repository
   - `config`: Manages configuration and tokens
 
 - **Command Handlers** (`src/commands/`):
   - `AnalyzeCommand`: Orchestrates the code analysis process
+  - `CoverageCommand`: Handles test coverage analysis with HTML reporting
+  - `UploadCommand`: Manages binary uploads to Nexus with authentication
+  - `DownloadCommand`: Downloads custom Nexus artifacts
   - `ConfigCommand`: Handles interactive configuration management
 
 - **Utilities** (`src/utils/`):
@@ -74,6 +79,14 @@ react-metrics ./my-react-project
 # Debug mode with output file
 react-metrics --debug --output debug.log
 
+# Test coverage analysis
+react-metrics coverage
+react-metrics coverage --html custom-report.html
+
+# Upload binary to Nexus
+react-metrics upload -v 1.0.0
+react-metrics upload -v 1.0.0 --no-dry-run
+
 # Download custom Nexus artifact
 react-metrics download -g fr.maif.digital -a my-tool -v 1.0.0
 
@@ -84,7 +97,7 @@ react-metrics config --reset
 
 ## Development Notes
 
-- The project uses Node.js 18+ and TypeScript 5.3+
+- The project uses Node.js 22+ and TypeScript 5.3+
 - Jenkins pipeline configured for Node.js 22 with npm
 - Binary paths and Nexus configuration are hardcoded in `system.ts` and need customization per environment
 - Token encryption uses a hardcoded secret key in `system.ts` that should be changed for production

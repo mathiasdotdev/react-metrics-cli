@@ -1,7 +1,35 @@
 import { vi } from 'vitest'
+
+// Mock Logger au niveau du fichier
+vi.mock('../../ui/logger/Logger', () => ({
+  Logger: {
+    info: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+    config: vi.fn(),
+    cleanup: vi.fn(),
+    credentials: vi.fn(),
+    colored: vi.fn(),
+    analysis: vi.fn(),
+    separator: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn(),
+    log: vi.fn(),
+    newLine: vi.fn(),
+    list: vi.fn(),
+    files: vi.fn(),
+    settings: vi.fn(),
+    report: vi.fn(),
+    examples: vi.fn()
+  }
+}))
+
 import { ConfigCommand } from '../Config'
 import { mockConsole, TEST_TIMEOUT } from '../../__tests__/helpers/testSetup'
 import { ConfigManager } from '../../core/config/ConfigManager'
+import { Logger } from '../../ui/logger/Logger'
 
 // Mock ConfigManager
 vi.mock('../../core/config/ConfigManager', () => ({
@@ -52,10 +80,10 @@ describe('ConfigCommand', () => {
 
     await configCommand.execute({ info: true })
 
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('📋 Informations de configuration React-Metrics')
+    expect(Logger.info).toHaveBeenCalledWith(
+      expect.stringContaining('Informations de configuration React-Metrics')
     )
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
+    expect(Logger.list).toHaveBeenCalledWith(
       expect.stringContaining('Extensions de fichiers: .js, .tsx')
     )
   }, TEST_TIMEOUT)
@@ -66,8 +94,8 @@ describe('ConfigCommand', () => {
     await configCommand.execute({ init: true })
 
     expect(ConfigManager.initConfig).toHaveBeenCalled()
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('# Fichier de configuration initialisé')
+    expect(Logger.success).toHaveBeenCalledWith(
+      expect.stringContaining('Fichier de configuration initialisé')
     )
   }, TEST_TIMEOUT)
 
@@ -76,14 +104,14 @@ describe('ConfigCommand', () => {
 
     await configCommand.execute({})
 
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('⚙️  Configuration React-Metrics')
+    expect(Logger.settings).toHaveBeenCalledWith(
+      expect.stringContaining('Configuration React-Metrics')
     )
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('# Options disponibles:')
+    expect(Logger.settings).toHaveBeenCalledWith(
+      expect.stringContaining('Options disponibles:')
     )
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('📁 Emplacement:')
+    expect(Logger.files).toHaveBeenCalledWith(
+      expect.stringContaining('Emplacement:')
     )
   }, TEST_TIMEOUT)
 
@@ -92,10 +120,10 @@ describe('ConfigCommand', () => {
 
     await configCommand.execute({})
 
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('⚠️  Aucun fichier de configuration trouvé')
+    expect(Logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining('Aucun fichier de configuration trouvé')
     )
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
+    expect(Logger.log).toHaveBeenCalledWith(
       expect.stringContaining('💡 Utilisez --init pour créer')
     )
   }, TEST_TIMEOUT)
@@ -105,11 +133,11 @@ describe('ConfigCommand', () => {
 
     await configCommand.execute({ init: true })
 
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('# Un fichier de configuration existe déjà')
+    expect(Logger.warn).toHaveBeenCalledWith(
+      expect.stringContaining('Un fichier de configuration existe déjà')
     )
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
-      expect.stringContaining('# Le fichier existant va être remplacé')
+    expect(Logger.log).toHaveBeenCalledWith(
+      expect.stringContaining('Le fichier existant va être remplacé')
     )
   }, TEST_TIMEOUT)
 })

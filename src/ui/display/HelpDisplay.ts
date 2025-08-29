@@ -1,5 +1,6 @@
 import chalk from 'chalk'
 import { SystemDiagnostic } from '../../system/SystemDiagnostic'
+import { Logger } from '../logger/Logger'
 import { LogoDisplay } from './LogoDisplay'
 
 export class HelpDisplay {
@@ -7,8 +8,9 @@ export class HelpDisplay {
    * Affiche l'aide générale complète avec le logo
    */
   static displayGeneralHelp(): void {
-    console.log(LogoDisplay.fullVersion())
-    console.log(`
+    Logger.log(LogoDisplay.fullVersion())
+    Logger.newLine()
+    Logger.log(`
 ${chalk.blue('# Utilisation:')}
   react-metrics [commande] [options]
 
@@ -46,17 +48,20 @@ ${chalk.gray(
    * Affiche un message d'aide rapide contextuel selon l'état du système
    */
   static async displayQuickHelp(): Promise<void> {
-    console.log(LogoDisplay.compactVersion())
-    console.log() // Ligne vide
-    
+    Logger.log(LogoDisplay.compactVersion())
+    Logger.newLine()
+
     try {
       const systemStatus = await SystemDiagnostic.checkSystemStatus()
-      const contextualMessage = SystemDiagnostic.generateContextualHelp(systemStatus)
-      console.log(contextualMessage)
+      const contextualMessage =
+        SystemDiagnostic.generateContextualHelp(systemStatus)
+      Logger.log(contextualMessage)
     } catch (error) {
       // Fallback en cas d'erreur lors du diagnostic
-      console.log(chalk.gray('Impossible de vérifier l\'état du système.'))
-      console.log(chalk.blue('Pour voir toutes les commandes: ') + chalk.white('react-metrics --help'))
+      Logger.error("Impossible de vérifier l'état du système.")
+      Logger.log(
+        'Pour voir toutes les commandes: ' + chalk.white('react-metrics --help')
+      )
     }
   }
 }

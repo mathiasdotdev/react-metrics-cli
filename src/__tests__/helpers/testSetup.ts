@@ -39,6 +39,32 @@ export const mockConsole = () => {
   }
 }
 
+// Mock du Logger pour les tests
+export const mockLogger = () => {
+  const mockMethods = {
+    info: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+    config: vi.fn(),
+    cleanup: vi.fn(),
+    credentials: vi.fn(),
+    colored: vi.fn(),
+    analysis: vi.fn(),
+    separator: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn()
+  }
+  
+  // Mock le module Logger
+  vi.doMock('../../ui/logger/Logger', () => ({
+    Logger: mockMethods
+  }))
+  
+  return mockMethods
+}
+
 // Mock du process.exit pour les tests
 export const mockProcessExit = () => {
   const originalExit = process.exit

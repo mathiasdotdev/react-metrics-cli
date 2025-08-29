@@ -1,10 +1,10 @@
-import chalk from 'chalk'
 import { Command } from 'commander'
 import { BinaryManager } from '../core/binary/BinaryManager'
 import { ConfigManager } from '../core/config/ConfigManager'
-import { LogoDisplay } from '../ui/display/LogoDisplay'
-import { CommandWrapper } from '../ui/wrapper/CommandWrapper'
 import { TokenManager } from '../core/nexus/TokenManager'
+import { LogoDisplay } from '../ui/display/LogoDisplay'
+import { Logger } from '../ui/logger/Logger'
+import { CommandWrapper } from '../ui/wrapper/CommandWrapper'
 
 export interface ConfigCommandOptions {
   info?: boolean
@@ -28,8 +28,8 @@ export class ConfigCommand {
   async execute(options: ConfigCommandOptions): Promise<void> {
     try {
       // Afficher le logo compact pour toutes les sous-commandes
-      console.log(LogoDisplay.compactVersion())
-      console.log()
+      Logger.log(LogoDisplay.compactVersion())
+      Logger.newLine()
 
       if (options.init) {
         await this.initConfiguration()
@@ -43,7 +43,7 @@ export class ConfigCommand {
         await this.showConfigHelp()
       }
     } catch (error) {
-      console.error(chalk.red(`# Erreur: ${error}`))
+      Logger.error(`# Erreur: ${error}`)
       process.exit(1)
     }
   }
@@ -53,86 +53,74 @@ export class ConfigCommand {
    */
   private async initConfiguration(): Promise<void> {
     if (ConfigManager.configExists()) {
-      console.log(chalk.yellow('# Un fichier de configuration existe déjà'))
-      console.log(chalk.gray(`# Fichier: ${ConfigManager.getConfigPath()}`))
-      console.log(
-        chalk.gray(
-          '# Le fichier existant va être remplacé par les valeurs par défaut'
-        )
+      Logger.warn('Un fichier de configuration existe déjà !')
+      Logger.log(`# Fichier: ${ConfigManager.getConfigPath()}`)
+      Logger.log(
+        '# Le fichier existant va être remplacé par les valeurs par défaut'
       )
     }
 
     ConfigManager.initConfig()
-    console.log(
-      chalk.green(
-        `# Fichier de configuration initialisé: ${ConfigManager.getConfigPath()}`
-      )
+    Logger.success(
+      `Fichier de configuration initialisé: ${ConfigManager.getConfigPath()}`
     )
-    console.log(
-      chalk.gray(`# Modifiez le fichier directement dans votre éditeur`)
-    )
+    Logger.log('# Modifiez le fichier directement dans votre éditeur')
   }
 
   /**
    * Affiche les informations de configuration
    */
   private async showInfo(): Promise<void> {
-    console.log(chalk.cyan('📋 Informations de configuration React-Metrics\n'))
+    Logger.info('Informations de configuration React-Metrics\n')
 
     if (!ConfigManager.configExists()) {
-      console.log(chalk.yellow('⚠️  Aucun fichier de configuration trouvé'))
-      console.log(
-        chalk.gray(
-          `💡 Utilisez 'react-metrics config --init' pour créer un fichier de configuration`
-        )
+      Logger.warn('Aucun fichier de configuration trouvé')
+      Logger.log(
+        `💡 Utilisez 'react-metrics config --init' pour créer un fichier de configuration`
       )
       return
     }
 
     const config = ConfigManager.loadConfig()
-    console.log(chalk.blue(`📁 Fichier: ${ConfigManager.getConfigPath()}\n`))
+    Logger.files(`Fichier: ${ConfigManager.getConfigPath()}\n`)
 
-    console.log(chalk.cyan('🔧 Configuration actuelle:'))
-    console.log(`  Extensions de fichiers: ${config.fileExtensions.join(', ')}`)
-    console.log(`  Max goroutines: ${config.maxGoroutines}`)
-    console.log(`  Dossiers ignorés: ${config.ignoredFolders.join(', ')}`)
+    Logger.settings('Configuration actuelle:')
+    Logger.list(`Extensions de fichiers: ${config.fileExtensions.join(', ')}`)
+    Logger.list(`Max goroutines: ${config.maxGoroutines}`)
+    Logger.list(`Dossiers ignorés: ${config.ignoredFolders.join(', ')}`)
     if (config.otherIgnoredFolders.length > 0) {
-      console.log(
-        `  Autres dossiers ignorés: ${config.otherIgnoredFolders.join(', ')}`
+      Logger.list(
+        `Autres dossiers ignorés: ${config.otherIgnoredFolders.join(', ')}`
       )
     }
-    console.log(
-      `  Ignorer annotations: ${config.ignoreAnnotations ? 'Oui' : 'Non'}`
+    Logger.list(
+      `Ignorer annotations: ${config.ignoreAnnotations ? 'Oui' : 'Non'}`
     )
 
-    console.log(chalk.cyan('\n📊 Rapports:'))
-    console.log(
-      `  Terminal: ${config.reports.terminal ? 'Activé' : 'Désactivé'}`
-    )
-    console.log(`  HTML: ${config.reports.html ? 'Activé' : 'Désactivé'}`)
-    console.log(`  JSON: ${config.reports.json ? 'Activé' : 'Désactivé'}`)
+    Logger.report('Rapports:')
+    Logger.list(`Terminal: ${config.reports.terminal ? 'Activé' : 'Désactivé'}`)
+    Logger.list(`HTML: ${config.reports.html ? 'Activé' : 'Désactivé'}`)
+    Logger.list(`JSON: ${config.reports.json ? 'Activé' : 'Désactivé'}`)
 
-    console.log(chalk.cyan('\n🔍 Analyses:'))
-    console.log(
-      `  Constantes: ${config.analysis.constants ? 'Activée' : 'Désactivée'}`
+    Logger.analysis('Analyses:')
+    Logger.list(
+      `Constantes: ${config.analysis.constants ? 'Activée' : 'Désactivée'}`
     )
-    console.log(
-      `  Fonctions: ${config.analysis.functions ? 'Activée' : 'Désactivée'}`
+    Logger.list(
+      `Fonctions: ${config.analysis.functions ? 'Activée' : 'Désactivée'}`
     )
-    console.log(
-      `  Classes: ${config.analysis.classes ? 'Activée' : 'Désactivée'}`
+    Logger.list(
+      `Classes: ${config.analysis.classes ? 'Activée' : 'Désactivée'}`
     )
-    console.log(`  Props: ${config.analysis.props ? 'Activée' : 'Désactivée'}`)
-    console.log(
-      `  Consoles: ${config.analysis.consoles ? 'Activée' : 'Désactivée'}`
+    Logger.list(`Props: ${config.analysis.props ? 'Activée' : 'Désactivée'}`)
+    Logger.list(
+      `Consoles: ${config.analysis.consoles ? 'Activée' : 'Désactivée'}`
     )
-    console.log(
-      `  Imports: ${config.analysis.imports ? 'Activée' : 'Désactivée'}`
+    Logger.list(
+      `Imports: ${config.analysis.imports ? 'Activée' : 'Désactivée'}`
     )
-    console.log(
-      `  Dépendances: ${
-        config.analysis.dependencies ? 'Activée' : 'Désactivée'
-      }`
+    Logger.list(
+      `Dépendances: ${config.analysis.dependencies ? 'Activée' : 'Désactivée'}`
     )
   }
 
@@ -140,61 +128,58 @@ export class ConfigCommand {
    * Affiche l'aide de configuration
    */
   private async showConfigHelp(): Promise<void> {
-    console.log(chalk.cyan('⚙️  Configuration React-Metrics\n'))
+    Logger.settings('Configuration React-Metrics\n')
 
     if (!ConfigManager.configExists()) {
-      console.log(chalk.yellow('⚠️  Aucun fichier de configuration trouvé'))
-      console.log(
-        chalk.gray(
-          '💡 Utilisez --init pour créer un fichier de configuration\n'
-        )
+      Logger.warn('Aucun fichier de configuration trouvé')
+      Logger.log(
+        '💡 Utilisez --init pour créer un fichier de configuration\n'
       )
     } else {
-      console.log(chalk.green('✅ Fichier de configuration trouvé'))
+      Logger.success('Fichier de configuration trouvé')
     }
 
-    console.log(
-      chalk.blue(`📁 Emplacement: ${ConfigManager.getConfigPath()}\n`)
+    Logger.files(`Emplacement: ${ConfigManager.getConfigPath()}\n`)
+
+    Logger.settings('Options disponibles:')
+    Logger.list(
+      '--info         Afficher la configuration actuelle'
+    )
+    Logger.list(
+      '--init         Créer/réinitialiser le fichier de configuration'
+    )
+    Logger.list('--credentials  Configurer les credentials Nexus')
+    Logger.list(
+      '--reset        Supprimer toute la configuration'
+    )
+    Logger.newLine()
+    Logger.settings('# Modification manuelle:')
+    Logger.list(
+      'Ouvrez le fichier dans votre éditeur pour le modifier'
+    )
+    Logger.list(
+      'Le fichier sera automatiquement utilisé par react-metrics'
     )
 
-    console.log(chalk.cyan('# Options disponibles:'))
-    console.log(chalk.gray('  # --info         Afficher la configuration actuelle'))
-    console.log(
-      chalk.gray(
-        '  # --init         Créer/réinitialiser le fichier de configuration'
-      )
-    )
-    console.log(chalk.gray('  # --credentials  Configurer les credentials Nexus'))
-    console.log(chalk.gray('  # --reset        Supprimer toute la configuration'))
-    console.log()
-    console.log(chalk.cyan('# Modification manuelle:'))
-    console.log(
-      chalk.gray('  # Ouvrez le fichier dans votre éditeur pour le modifier')
-    )
-    console.log(
-      chalk.gray(
-        '  # Le fichier sera automatiquement utilisé par react-metrics'
-      )
-    )
-    console.log()
-    console.log(chalk.cyan('# Exemples:'))
-    console.log(chalk.gray('  # react-metrics config --info'))
-    console.log(chalk.gray('  # react-metrics config --init'))
-    console.log(chalk.gray('  # react-metrics config --credentials'))
-    console.log(chalk.gray(`  # code ${ConfigManager.getConfigPath()}`))
+    Logger.newLine()
+    Logger.examples('Exemples:')
+    Logger.list('react-metrics config --info')
+    Logger.list('react-metrics config --init')
+    Logger.list('react-metrics config --credentials')
+    Logger.list(`code ${ConfigManager.getConfigPath()}`)
   }
 
   /**
    * Configure les credentials Nexus
    */
   private async configureCredentials(): Promise<void> {
-    console.log(chalk.cyan('🔐 Configuration des credentials Nexus\n'))
-    
+    Logger.settings('Configuration des credentials Nexus\n')
+
     try {
       await this.tokenManager.getAuthToken()
-      console.log(chalk.green('\n✅ Credentials configurés avec succès'))
+      Logger.success('Credentials configurés avec succès')
     } catch (error) {
-      console.error(chalk.red(`❌ Erreur lors de la configuration: ${error}`))
+      Logger.error(`Erreur lors de la configuration: ${error}`)
     }
   }
 
@@ -202,22 +187,22 @@ export class ConfigCommand {
    * Remet à zéro toute la configuration
    */
   private async resetConfiguration(): Promise<void> {
-    console.log(chalk.yellow('🔄 Remise à zéro de la configuration\n'))
-    
+    Logger.cleanup('Remise à zéro de la configuration\n')
+
     try {
       // Reset de la configuration React-Metrics
       if (ConfigManager.configExists()) {
         ConfigManager.resetConfig()
-        console.log(chalk.yellow('🗑️  Configuration React-Metrics supprimée'))
+        Logger.cleanup('Configuration React-Metrics supprimée')
       }
-      
+
       // Reset des credentials
       await this.tokenManager.deleteCredentials()
-      
-      console.log(chalk.green('\n✅ Configuration complètement remise à zéro'))
-      console.log(chalk.gray('💡 Utilisez --init pour recréer une configuration par défaut'))
+
+      Logger.success('Configuration complètement remise à zéro')
+      Logger.log('Utilisez --init pour recréer une configuration par défaut')
     } catch (error) {
-      console.error(chalk.red(`❌ Erreur lors de la remise à zéro: ${error}`))
+      Logger.error(`Erreur lors de la remise à zéro: ${error}`)
     }
   }
 }
@@ -234,22 +219,35 @@ export function createConfigCommand(): Command {
       'Initialiser le fichier de configuration avec les valeurs par défaut'
     )
     .option('-i, --info', 'Afficher les informations de configuration')
-    .option('-c, --credentials', 'Configurer les credentials Nexus (chiffrement AES)')
-    .option('-r, --reset', 'Supprimer toute la configuration (React-Metrics + credentials)')
-    .action(async (options: { init?: boolean; info?: boolean; credentials?: boolean; reset?: boolean }) => {
-      try {
-        const configCommand = new ConfigCommand()
-        await configCommand.execute({
-          init: options.init,
-          info: options.info,
-          credentials: options.credentials,
-          reset: options.reset,
-        })
-      } catch (error) {
-        console.error(chalk.red(`Erreur: ${error}`))
-        process.exit(1)
+    .option(
+      '-c, --credentials',
+      'Configurer les credentials Nexus (chiffrement AES)'
+    )
+    .option(
+      '-r, --reset',
+      'Supprimer toute la configuration (React-Metrics + credentials)'
+    )
+    .action(
+      async (options: {
+        init?: boolean
+        info?: boolean
+        credentials?: boolean
+        reset?: boolean
+      }) => {
+        try {
+          const configCommand = new ConfigCommand()
+          await configCommand.execute({
+            init: options.init,
+            info: options.info,
+            credentials: options.credentials,
+            reset: options.reset,
+          })
+        } catch (error) {
+          Logger.error(`Erreur: ${error}`)
+          process.exit(1)
+        }
       }
-    })
+    )
 
   return configCmd
 }

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
+import { Logger } from '../../ui/logger/Logger';
 
 export interface ReactMetricsConfig {
   fileExtensions: string[];
@@ -8,6 +9,7 @@ export interface ReactMetricsConfig {
   ignoredFolders: string[];
   otherIgnoredFolders: string[];
   ignoreAnnotations: boolean;
+  modeDebug: boolean;
   reports: {
     terminal: boolean;
     html: boolean;
@@ -38,6 +40,7 @@ export class ConfigManager {
       ignoredFolders: ['node_modules', '.git', 'dist', 'build', 'coverage'],
       otherIgnoredFolders: [],
       ignoreAnnotations: true,
+      modeDebug: false,
       reports: {
         terminal: true,
         html: false,
@@ -77,7 +80,7 @@ export class ConfigManager {
       // Fusionner avec les valeurs par défaut pour s'assurer que tous les champs sont présents
       return { ...ConfigManager.getDefaultConfig(), ...config };
     } catch (error) {
-      console.warn('Erreur lors du chargement de la configuration, utilisation des valeurs par défaut:', error);
+      Logger.error('Erreur lors du chargement de la configuration, utilisation des valeurs par défaut:', error);
       return ConfigManager.getDefaultConfig();
     }
   }

@@ -2,6 +2,50 @@
 
 ## [Non publiée]
 
+## [1.12.0] - 28/08/2025
+
+### Fixed
+- **Tests unitaires complets** : Correction de tous les tests restants (problèmes de mock sur Upload)
+- **Mocking ConfigManager** : Ajout du mock Logger pour éliminer les sorties stderr
+- **Mocking Upload** : Correction TokenManager et fs-extra pour tests d'authentification
+
+## [1.11.0] - 28/08/2025
+
+### Added
+- **Commande upload** : Upload intégré des binaires vers Nexus Repository avec `react-metrics upload -v 1.0.0`
+- **Intégration TokenManager** : Utilisation du système de credentials chiffré existant
+- **Mode dry-run** : Simulation par défaut avec `--dry-run`, upload réel avec `--no-dry-run`
+- **Tests complets** : Suite de tests unitaires pour la commande upload
+
+### Fixed
+- **Script make upload** : Remplacement de la dépendance aux variables d'environnement par le système TokenManager
+
+## [1.10.0] - 28/08/2025
+
+### Fixed
+- **Suite de tests complète** : Correction de tous les tests unitaires et d'intégration
+- **Support Windows** : Fix spawn npm avec npm.cmd et shell
+- **Mocks et exports manquants** : Ajout des dépendances System.ts et Logger
+
+## [1.9.0] - 26/08/2025
+
+### Added
+- **Logger centralisé** : Couleurs cohérentes
+- **Configuration .env** : Variables d'environnement
+- **Tests complets** : Suite pour core/config
+- **Build optimisé** : Scripts d'analyse
+
+### Changed
+- **TokenManager** : Un seul champ base64 depuis Nexus User Token
+- **Stockage credentials** : dans `~/.nexus-utils/.credentials`
+- **Système de retry** : 3 tentatives avant suppression des credentials
+- **Remplacement 130+ console.log** : par Logger
+
+### Fixed
+- **Interface TokenManager** : Simplification avec validation automatique du format base64
+- **Gestion environnements** : Détection automatique local/prod avec variables d'environnement
+- **Build size** : Réduction significative avec tsconfig.prod.json
+
 ## [1.8.0] - 26/08/2025
 
 ### Fixed

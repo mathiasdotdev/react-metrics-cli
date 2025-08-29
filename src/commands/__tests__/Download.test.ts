@@ -1,7 +1,28 @@
 import { vi } from 'vitest'
+
+// Mock Logger au niveau du fichier
+vi.mock('../../ui/logger/Logger', () => ({
+  Logger: {
+    info: vi.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+    config: vi.fn(),
+    cleanup: vi.fn(),
+    credentials: vi.fn(),
+    colored: vi.fn(),
+    analysis: vi.fn(),
+    separator: vi.fn(),
+    start: vi.fn(),
+    stop: vi.fn()
+  }
+}))
+
 import { DownloadCommand } from '../Download'
 import { mockConsole, mockProcessExit, TEST_TIMEOUT } from '../../__tests__/helpers/testSetup'
 import { createMockBinaryManager } from '../../__tests__/helpers/mockBinary'
+import { Logger } from '../../ui/logger/Logger'
 
 describe('DownloadCommand', () => {
   let downloadCommand: DownloadCommand
@@ -11,6 +32,7 @@ describe('DownloadCommand', () => {
   beforeEach(() => {
     consoleMocks = mockConsole()
     processMocks = mockProcessExit()
+    vi.clearAllMocks()
     downloadCommand = new DownloadCommand()
   })
 
@@ -28,7 +50,7 @@ describe('DownloadCommand', () => {
     await downloadCommand.execute({})
 
     expect(mockBinaryManager.downloadReactMetricsBinary).toHaveBeenCalledWith(undefined)
-    expect(consoleMocks.mockLog).toHaveBeenCalledWith(
+    expect(Logger.success).toHaveBeenCalledWith(
       expect.stringContaining('Binaire téléchargé : /path/to/downloaded/binary')
     )
   }, TEST_TIMEOUT)

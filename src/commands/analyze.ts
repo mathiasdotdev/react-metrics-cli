@@ -1,8 +1,8 @@
-import chalk from 'chalk'
 import { Command } from 'commander'
 import { BinaryExecutor, ExecutionOptions } from '../core/binary/BinaryExecutor'
 import { BinaryManager } from '../core/binary/BinaryManager'
 import { CommandWrapper } from '../ui/wrapper/CommandWrapper'
+import { Logger } from '../ui/logger/Logger'
 
 export interface AnalyzeCommandOptions {
   path?: string
@@ -25,9 +25,7 @@ export class AnalyzeCommand {
       // Configurer le mode local si demandé
       if (options.local) {
         process.env.NEXUS_LOCAL = 'true'
-        console.log(
-          chalk.blue('🏠 Mode local activé (Nexus sur localhost:8081)')
-        )
+        Logger.info('🏠 Mode local activé (Nexus sur localhost:8081)')
       }
 
       // Télécharger le binaire automatiquement avec la structure simplifiée
@@ -37,25 +35,17 @@ export class AnalyzeCommand {
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes('ENOENT')) {
-          console.error(chalk.red('❌ Binaire react-metrics non trouvé'))
-          console.error(
-            chalk.yellow(
-              '💡 Utilisez "react-metrics download" pour télécharger le binaire'
-            )
-          )
-          console.error(
-            chalk.yellow('💡 Ou configurez Nexus avec "react-metrics config"')
-          )
+          Logger.error('Binaire react-metrics non trouvé')
+          Logger.warn('💡 Utilisez "react-metrics download" pour télécharger le binaire')
+          Logger.warn('💡 Ou configurez Nexus avec "react-metrics config"')
         } else if (error.message.includes('spawn')) {
-          console.error(chalk.red("❌ Impossible d'exécuter le binaire"))
-          console.error(
-            chalk.yellow("💡 Vérifiez les permissions d'exécution du binaire")
-          )
+          Logger.error("Impossible d'exécuter le binaire")
+          Logger.warn("💡 Vérifiez les permissions d'exécution du binaire")
         } else {
-          console.error(chalk.red(`❌ ${error.message}`))
+          Logger.error(error.message)
         }
       } else {
-        console.error(chalk.red(`❌ Erreur inattendue: ${error}`))
+        Logger.error(`Erreur inattendue: ${error}`)
       }
       process.exit(1)
     }
@@ -84,12 +74,12 @@ export class AnalyzeCommand {
           error.message.includes('Unauthorized') ||
           error.message.includes('Impossible de configurer l\'authentification Nexus')
         ) {
-          console.error(chalk.red('\n❌ Échec du téléchargement'))
-          console.error(chalk.yellow('💡 Problème d\'authentification Nexus'))
-          console.error(chalk.yellow('💡 Vos credentials Nexus ne sont pas configurés'))
-          console.error(chalk.yellow('💡 La commande aurait dû vous demander vos credentials'))
-          console.error(chalk.yellow('💡 Si nécessaire, supprimez le fichier de credentials pour recommencer:'))
-          console.error(chalk.cyan(`   ${require('os').homedir()}/.nexus-utils/.credentials`))
+          Logger.error('\nÉchec du téléchargement')
+          Logger.warn('💡 Problème d\'authentification Nexus')
+          Logger.warn('💡 Vos credentials Nexus ne sont pas configurés')
+          Logger.warn('💡 La commande aurait dû vous demander vos credentials')
+          Logger.warn('💡 Si nécessaire, supprimez le fichier de credentials pour recommencer:')
+          Logger.colored('cyan', `   ${require('os').homedir()}/.nexus-utils/.credentials`)
           throw new Error(
             'Authentication Nexus échouée. Configurez vos credentials.'
           )
@@ -98,24 +88,16 @@ export class AnalyzeCommand {
           error.message.includes('ECONNREFUSED') ||
           error.message.includes('getaddrinfo')
         ) {
-          console.error(chalk.red('\n❌ Échec du téléchargement'))
-          console.error(chalk.yellow('💡 Serveur Nexus inaccessible'))
-          console.error(chalk.yellow('💡 Vérifiez votre connexion réseau'))
-          console.error(
-            chalk.yellow(
-              '💡 Si vous testez en local, définissez: NEXUS_LOCAL=true'
-            )
-          )
-          console.error(
-            chalk.yellow(
-              '💡 Sinon vérifiez que https://nexus.maif.io est accessible'
-            )
-          )
+          Logger.error('\nÉchec du téléchargement')
+          Logger.warn('💡 Serveur Nexus inaccessible')
+          Logger.warn('💡 Vérifiez votre connexion réseau')
+          Logger.warn('💡 Si vous testez en local, définissez: NEXUS_LOCAL=true')
+          Logger.warn('💡 Sinon vérifiez que https://nexus.maif.io est accessible')
           throw new Error('Serveur Nexus inaccessible. Vérifiez votre réseau.')
         }
       }
 
-      console.error(chalk.red(`❌ Erreur lors du téléchargement: ${error}`))
+      Logger.error(`Erreur lors du téléchargement: ${error}`)
       throw error
     }
   }
@@ -135,12 +117,10 @@ export class AnalyzeCommand {
       debug: options.debug || false,
     }
 
-    console.log(
-      chalk.blue(`🔍 Analyse du projet: ${executionOptions.projectPath}`)
-    )
+    Logger.info(`🔍 Analyse du projet: ${executionOptions.projectPath}`)
 
     if (executionOptions.debug) {
-      console.log(chalk.gray('🐛 Mode debug activé'))
+      Logger.debug('🐛 Mode debug activé')
     }
 
     // Exécuter l'analyse
@@ -148,20 +128,18 @@ export class AnalyzeCommand {
 
     // Afficher les résultats
     if (!result.success) {
-      console.error(chalk.red("\n❌ L'analyse a échoué"))
+      Logger.error("\nL'analyse a échoué")
       if (result.stderr) {
-        console.error(chalk.red('Erreurs:'))
-        console.error(result.stderr)
+        Logger.error('Erreurs:')
+        Logger.error(result.stderr)
       }
       process.exit(result.exitCode)
     }
 
     // Afficher les informations de debug si activé
     if (executionOptions.debug) {
-      console.log(
-        chalk.blue(
-          `📝 Logs debug disponibles dans: output/logs/react-metrics-debug.log`
-        )
+      Logger.info(
+        `📝 Logs debug disponibles dans: output/logs/react-metrics-debug.log`
       )
     }
 
@@ -193,7 +171,7 @@ export function createAnalyzeCommand(): Command {
             local: options.local,
           })
         } catch (error) {
-          console.error(chalk.red(`Erreur: ${error}`))
+          Logger.error(`Erreur: ${error}`)
           process.exit(1)
         }
       }

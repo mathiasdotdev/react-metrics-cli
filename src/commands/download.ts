@@ -1,7 +1,7 @@
-import chalk from 'chalk'
-import { BinaryManager } from '../core/binary/BinaryManager'
-import { CommandWrapper } from '../ui/wrapper/CommandWrapper'
 import { Command } from 'commander'
+import { BinaryManager } from '../core/binary/BinaryManager'
+import { Logger } from '../ui/logger/Logger'
+import { CommandWrapper } from '../ui/wrapper/CommandWrapper'
 
 export interface DownloadCommandOptions {
   version?: string
@@ -27,9 +27,7 @@ export class DownloadCommand {
       // Configurer le mode local si demandé
       if (options.local) {
         process.env.NEXUS_LOCAL = 'true'
-        console.log(
-          chalk.blue('🏠 Mode local activé (Nexus sur localhost:8081)')
-        )
+        Logger.info('Mode local activé (Nexus sur localhost:8081)')
       }
 
       if (options.groupId || options.artifactId) {
@@ -48,23 +46,22 @@ export class DownloadCommand {
           format
         )
         if (pathDownloaded) {
-          console.log(chalk.green(`Binaire téléchargé : ${pathDownloaded}`))
+          Logger.success(`Binaire téléchargé : ${pathDownloaded}`)
         } else {
-          console.log(chalk.red('Téléchargement impossible.'))
+          Logger.error('Téléchargement impossible.')
         }
       } else {
         // Mode simplifié avec la structure react-metrics
-        const pathDownloaded = await this.binaryManager.downloadReactMetricsBinary(
-          options.version
-        )
+        const pathDownloaded =
+          await this.binaryManager.downloadReactMetricsBinary(options.version)
         if (pathDownloaded) {
-          console.log(chalk.green(`Binaire téléchargé : ${pathDownloaded}`))
+          Logger.success(`Binaire téléchargé : ${pathDownloaded}`)
         } else {
-          console.log(chalk.red('Téléchargement impossible.'))
+          Logger.error('Téléchargement impossible.')
         }
       }
     } catch (error) {
-      console.error(chalk.red(`Erreur: ${error}`))
+      Logger.error(`Erreur: ${error}`)
       process.exit(1)
     }
   }

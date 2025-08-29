@@ -5,8 +5,10 @@ import { createAnalyzeCommand } from './commands/Analyze'
 import { createConfigCommand } from './commands/Config'
 import { createCoverageCommand } from './commands/Coverage'
 import { createDownloadCommand } from './commands/Download'
-import { CommandWrapper } from './ui/wrapper/CommandWrapper'
+import { createUploadCommand } from './commands/Upload'
 import { HelpDisplay } from './ui/display/HelpDisplay'
+import { Logger } from './ui/logger/Logger'
+import { CommandWrapper } from './ui/wrapper/CommandWrapper'
 
 // Importer la version depuis package.json
 const packageJson = require('../package.json')
@@ -21,12 +23,12 @@ const program = CommandWrapper.createFullCommand()
 
 // Gestion des erreurs globales
 process.on('uncaughtException', (error) => {
-  console.error(chalk.red('❌ Erreur inattendue:'), error.message)
+  Logger.error(chalk.red('Erreur inattendue:'), error.message)
   process.exit(1)
 })
 
 process.on('unhandledRejection', (reason) => {
-  console.error(chalk.red('❌ Promesse rejetée:'), reason)
+  Logger.error(chalk.red('Promesse rejetée:'), reason)
   process.exit(1)
 })
 
@@ -51,6 +53,7 @@ if (process.argv.length === 2) {
   program.addCommand(createAnalyzeCommand())
   program.addCommand(createCoverageCommand())
   program.addCommand(createDownloadCommand())
+  program.addCommand(createUploadCommand())
   program.addCommand(createConfigCommand())
 
   // Parser les arguments
