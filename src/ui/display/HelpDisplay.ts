@@ -1,15 +1,15 @@
-import chalk from 'chalk'
-import { SystemDiagnostic } from '../../system/SystemDiagnostic'
-import { Logger } from '../logger/Logger'
-import { LogoDisplay } from './LogoDisplay'
+import chalk from 'chalk';
+import { SystemDiagnostic } from '../../system/SystemDiagnostic';
+import { Logger } from '../logger/Logger';
+import { LogoDisplay } from './LogoDisplay';
 
 export class HelpDisplay {
   /**
    * Affiche l'aide générale complète avec le logo
    */
   static displayGeneralHelp(): void {
-    Logger.log(LogoDisplay.fullVersion())
-    Logger.newLine()
+    Logger.log(LogoDisplay.fullVersion());
+    Logger.newLine();
     Logger.log(`
 ${chalk.blue('# Utilisation:')}
   react-metrics [commande] [options]
@@ -39,29 +39,24 @@ ${chalk.blue('# Options globales:')}
   -h, --help                       Afficher cette aide
   -V, --version                    Afficher la version
 
-${chalk.gray(
-  "Pour plus d'informations, visitez: https://github.com/your-org/react-metrics"
-)}`)
+${chalk.gray("Pour plus d'informations, visitez: https://github.com/your-org/react-metrics")}`);
   }
 
   /**
    * Affiche un message d'aide rapide contextuel selon l'état du système
    */
   static async displayQuickHelp(): Promise<void> {
-    Logger.log(LogoDisplay.compactVersion())
-    Logger.newLine()
+    Logger.log(LogoDisplay.compactVersion());
+    Logger.newLine();
 
     try {
-      const systemStatus = await SystemDiagnostic.checkSystemStatus()
-      const contextualMessage =
-        SystemDiagnostic.generateContextualHelp(systemStatus)
-      Logger.log(contextualMessage)
+      const systemStatus = await SystemDiagnostic.checkSystemStatus();
+      const contextualMessage = SystemDiagnostic.generateContextualHelp(systemStatus);
+      Logger.log(contextualMessage);
     } catch (error) {
       // Fallback en cas d'erreur lors du diagnostic
-      Logger.error("Impossible de vérifier l'état du système.")
-      Logger.log(
-        'Pour voir toutes les commandes: ' + chalk.white('react-metrics --help')
-      )
+      Logger.error("Impossible de vérifier l'état du système.");
+      Logger.log('Pour voir toutes les commandes: ' + chalk.white('react-metrics --help'));
     }
   }
 }

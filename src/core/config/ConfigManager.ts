@@ -44,7 +44,7 @@ export class ConfigManager {
       reports: {
         terminal: true,
         html: false,
-        json: false
+        json: false,
       },
       analysis: {
         constants: true,
@@ -53,8 +53,8 @@ export class ConfigManager {
         props: true,
         consoles: true,
         imports: true,
-        dependencies: false
-      }
+        dependencies: false,
+      },
     };
   }
 
@@ -76,11 +76,14 @@ export class ConfigManager {
     try {
       const configData = fs.readFileSync(ConfigManager.CONFIG_FILE, 'utf-8');
       const config = JSON.parse(configData) as ReactMetricsConfig;
-      
+
       // Fusionner avec les valeurs par défaut pour s'assurer que tous les champs sont présents
       return { ...ConfigManager.getDefaultConfig(), ...config };
     } catch (error) {
-      Logger.error('Erreur lors du chargement de la configuration, utilisation des valeurs par défaut:', error);
+      Logger.error(
+        'Erreur lors du chargement de la configuration, utilisation des valeurs par défaut:',
+        error,
+      );
       return ConfigManager.getDefaultConfig();
     }
   }

@@ -1,21 +1,21 @@
-import * as CryptoJS from 'crypto-js'
-import * as fs from 'fs-extra'
-import * as inquirer from 'inquirer'
-import * as os from 'os'
-import * as path from 'path'
-import { Logger } from '../../ui/logger/Logger'
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { promises as fs, constants } from 'node:fs';
+import * as inquirer from 'inquirer';
+import * as os from 'os';
+import * as path from 'path';
+import { Logger } from '../../ui/logger/Logger';
 
 interface NexusCredentials {
-  base64Token: string
-  attemptCount: number
+  base64Token: string;
+  attemptCount: number;
 }
 
 export class TokenManager {
-  private credentialsFilePath: string
+  private credentialsFilePath: string;
 
   constructor() {
-    const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils')
-    this.credentialsFilePath = path.join(nexusUtilsDir, '.credentials')
+    const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils');
+    this.credentialsFilePath = path.join(nexusUtilsDir, '.credentials');
   }
 
   /**
@@ -25,74 +25,64 @@ export class TokenManager {
     try {
       // Vérifier si les credentials chiffrés existent
       if (await this.credentialsExist()) {
-        Logger.credentials('Credentials Nexus trouvés dans le cache...')
+        Logger.credentials('Credentials Nexus trouvés dans le cache...');
 
         // Demander le mot de passe maître pour déchiffrer
         const masterPassword = await this.promptForMasterPassword(
-          'Mot de passe pour déchiffrer les credentials Nexus:'
-        )
+          'Mot de passe pour déchiffrer les credentials Nexus:',
+        );
 
         try {
-          const credentials = await this.loadEncryptedCredentials(
-            masterPassword
-          )
+          const credentials = await this.loadEncryptedCredentials(masterPassword);
 
           // Vérifier si les credentials sont valides et gérer les tentatives
           if (await this.validateAuthToken(credentials.base64Token)) {
             // Réinitialiser le compteur de tentatives en cas de succès
             if (credentials.attemptCount > 0) {
-              credentials.attemptCount = 0
-              await this.saveEncryptedCredentials(credentials, masterPassword)
+              credentials.attemptCount = 0;
+              await this.saveEncryptedCredentials(credentials, masterPassword);
             }
-            return credentials.base64Token
+            return credentials.base64Token;
           } else {
-            credentials.attemptCount = (credentials.attemptCount || 0) + 1
-            Logger.warn(
-              `Credentials invalides (tentative ${credentials.attemptCount}/3)...`
-            )
+            credentials.attemptCount = (credentials.attemptCount || 0) + 1;
+            Logger.warn(`Credentials invalides (tentative ${credentials.attemptCount}/3)...`);
 
             if (credentials.attemptCount >= 3) {
-              Logger.error(
-                'Nombre maximum de tentatives atteint, suppression des credentials'
-              )
-              await this.deleteCredentials()
+              Logger.error('Nombre maximum de tentatives atteint, suppression des credentials');
+              await this.deleteCredentials();
             } else {
-              await this.saveEncryptedCredentials(credentials, masterPassword)
-              return this.getAuthToken() // Retry
+              await this.saveEncryptedCredentials(credentials, masterPassword);
+              return this.getAuthToken(); // Retry
             }
           }
         } catch (decryptError) {
-          Logger.error(
-            'Mot de passe de déchiffrement incorrect ou credentials corrompus'
-          )
-          Logger.cleanup('Suppression des credentials existants...')
-          await this.deleteCredentials()
+          Logger.error('Mot de passe de déchiffrement incorrect ou credentials corrompus');
+          Logger.cleanup('Suppression des credentials existants...');
+          await this.deleteCredentials();
         }
       }
 
       // Demander le token base64 à l'utilisateur
-      const base64Token = await this.promptForBase64Token()
+      const base64Token = await this.promptForBase64Token();
 
       // Demander le mot de passe maître pour chiffrer
       const masterPassword = await this.promptForMasterPassword(
-        'Mot de passe pour chiffrer les credentials:'
-      )
+        'Mot de passe pour chiffrer les credentials:',
+      );
 
       // Créer l'objet credentials avec compteur initialisé
       const credentials: NexusCredentials = {
         base64Token,
         attemptCount: 0,
-      }
+      };
 
       // Sauvegarder les credentials chiffrés avec le mot de passe maître
-      await this.saveEncryptedCredentials(credentials, masterPassword)
+      await this.saveEncryptedCredentials(credentials, masterPassword);
 
       // Retourner le token base64
-      return base64Token
+      return base64Token;
     } catch (error) {
-      throw new Error(
-        `Erreur lors de la récupération de l'authentification: ${error}`
-      )
+      throw new Error(`Erreur lors de la récupération de l'authentification: ${error}`);
     }
   }
 
@@ -101,43 +91,38 @@ export class TokenManager {
    */
   private async credentialsExist(): Promise<boolean> {
     try {
-      await fs.access(this.credentialsFilePath)
-      return true
+      await fs.access(this.credentialsFilePath, constants.F_OK);
+      return true;
     } catch {
-      return false
+      return false;
     }
   }
 
   /**
    * Charge et déchiffre les credentials depuis le fichier
    */
-  private async loadEncryptedCredentials(
-    masterPassword: string
-  ): Promise<NexusCredentials> {
+  private async loadEncryptedCredentials(masterPassword: string): Promise<NexusCredentials> {
     try {
-      const encryptedData = await fs.readFile(this.credentialsFilePath, 'utf8')
-      const bytes = CryptoJS.AES.decrypt(encryptedData, masterPassword)
-      const decryptedCredentials = bytes.toString(CryptoJS.enc.Utf8)
+      const encryptedData = await fs.readFile(this.credentialsFilePath, 'utf8');
+      const decryptedCredentials = this.decryptData(encryptedData, masterPassword);
 
       if (!decryptedCredentials) {
-        throw new Error(
-          'Impossible de déchiffrer les credentials - mot de passe incorrect'
-        )
+        throw new Error('Impossible de déchiffrer les credentials - mot de passe incorrect');
       }
 
-      const credentials = JSON.parse(decryptedCredentials) as NexusCredentials
+      const credentials = JSON.parse(decryptedCredentials) as NexusCredentials;
 
       // Vérifier que les credentials ont la structure attendue
       if (!credentials.base64Token) {
-        throw new Error('Structure des credentials invalide')
+        throw new Error('Structure des credentials invalide');
       }
 
-      return credentials
+      return credentials;
     } catch (error) {
       if (error instanceof SyntaxError) {
-        throw new Error('Mot de passe de déchiffrement incorrect')
+        throw new Error('Mot de passe de déchiffrement incorrect');
       }
-      throw new Error(`Erreur lors du déchiffrement des credentials: ${error}`)
+      throw new Error(`Erreur lors du déchiffrement des credentials: ${error}`);
     }
   }
 
@@ -146,29 +131,24 @@ export class TokenManager {
    */
   private async saveEncryptedCredentials(
     credentials: NexusCredentials,
-    masterPassword: string
+    masterPassword: string,
   ): Promise<void> {
     try {
       // Créer le répertoire si nécessaire
-      const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils')
-      await fs.ensureDir(nexusUtilsDir)
+      const nexusUtilsDir = path.join(os.homedir(), '.nexus-utils');
+      await fs.mkdir(nexusUtilsDir, { recursive: true });
 
       // Sérialiser et chiffrer les credentials avec le mot de passe maître
-      const credentialsJson = JSON.stringify(credentials)
-      const encryptedCredentials = CryptoJS.AES.encrypt(
-        credentialsJson,
-        masterPassword
-      ).toString()
+      const credentialsJson = JSON.stringify(credentials);
+      const encryptedCredentials = this.encryptData(credentialsJson, masterPassword);
 
       // Sauvegarder dans le fichier
-      await fs.writeFile(this.credentialsFilePath, encryptedCredentials, 'utf8')
+      await fs.writeFile(this.credentialsFilePath, encryptedCredentials, 'utf8');
 
-      Logger.success('Credentials sauvegardés de manière sécurisée')
-      Logger.info(
-        'Votre mot de passe sera demandé à chaque interaction avec Nexus'
-      )
+      Logger.success('Credentials sauvegardés de manière sécurisée');
+      Logger.info('Votre mot de passe sera demandé à chaque interaction avec Nexus');
     } catch (error) {
-      throw new Error(`Erreur lors de la sauvegarde des credentials: ${error}`)
+      throw new Error(`Erreur lors de la sauvegarde des credentials: ${error}`);
     }
   }
 
@@ -184,31 +164,27 @@ export class TokenManager {
         mask: '*',
         validate: (input: string) => {
           if (!input || input.trim().length === 0) {
-            return 'Le mot de passe ne peut pas être vide'
+            return 'Le mot de passe ne peut pas être vide';
           }
           if (input.length < 6) {
-            return 'Le mot de passe doit faire au moins 6 caractères'
+            return 'Le mot de passe doit faire au moins 6 caractères';
           }
-          return true
+          return true;
         },
       },
-    ])
+    ]);
 
-    return answer.masterPassword
+    return answer.masterPassword;
   }
 
   /**
    * Demande le token base64 depuis Nexus User Token à l'utilisateur
    */
   private async promptForBase64Token(): Promise<string> {
-    Logger.settings('Configuration du token Nexus')
-    Logger.info(
-      'Récupérez votre token depuis Nexus > User Token (format base64 user:password)'
-    )
-    Logger.info(
-      'Le token sera chiffré et stocké localement de manière sécurisée.'
-    )
-    Logger.newLine()
+    Logger.settings('Configuration du token Nexus');
+    Logger.info('Récupérez votre token depuis Nexus > User Token (format base64 user:password)');
+    Logger.info('Le token sera chiffré et stocké localement de manière sécurisée.');
+    Logger.newLine();
 
     const answer = await inquirer.default.prompt([
       {
@@ -218,24 +194,24 @@ export class TokenManager {
         mask: '*',
         validate: (input: string) => {
           if (!input || input.trim().length === 0) {
-            return 'Le token ne peut pas être vide'
+            return 'Le token ne peut pas être vide';
           }
 
           // Vérifier que c'est une base64 valide
           try {
-            const decoded = Buffer.from(input.trim(), 'base64').toString('utf8')
+            const decoded = Buffer.from(input.trim(), 'base64').toString('utf8');
             if (!decoded.includes(':') || decoded.split(':').length !== 2) {
-              return 'Le token doit être au format base64 contenant user:password'
+              return 'Le token doit être au format base64 contenant user:password';
             }
-            return true
+            return true;
           } catch {
-            return 'Format base64 invalide'
+            return 'Format base64 invalide';
           }
         },
       },
-    ])
+    ]);
 
-    return answer.base64Token.trim()
+    return answer.base64Token.trim();
   }
 
   /**
@@ -243,11 +219,11 @@ export class TokenManager {
    */
   private async validateAuthToken(authToken: string): Promise<boolean> {
     try {
-      const decoded = Buffer.from(authToken, 'base64').toString('utf8')
-      const parts = decoded.split(':')
-      return parts.length === 2 && parts[0].length > 0 && parts[1].length > 0
+      const decoded = Buffer.from(authToken, 'base64').toString('utf8');
+      const parts = decoded.split(':');
+      return parts.length === 2 && parts[0].length > 0 && parts[1].length > 0;
     } catch {
-      return false
+      return false;
     }
   }
 
@@ -257,11 +233,11 @@ export class TokenManager {
   async deleteCredentials(): Promise<void> {
     try {
       if (await this.credentialsExist()) {
-        await fs.remove(this.credentialsFilePath)
-        Logger.cleanup('Credentials supprimés')
+        await fs.rm(this.credentialsFilePath, { force: true });
+        Logger.cleanup('Credentials supprimés');
       }
     } catch (error) {
-      Logger.error(`Erreur lors de la suppression des credentials: ${error}`)
+      Logger.error(`Erreur lors de la suppression des credentials: ${error}`);
     }
   }
 
@@ -271,26 +247,74 @@ export class TokenManager {
   async getCredentialsInfo(): Promise<void> {
     try {
       if (await this.credentialsExist()) {
-        const stats = await fs.stat(this.credentialsFilePath)
+        const stats = await fs.stat(this.credentialsFilePath);
 
-        Logger.credentials('Informations des credentials:')
-        Logger.list(`Fichier: ${this.credentialsFilePath}`)
-        Logger.list(`Modifié: ${stats.mtime.toLocaleString()}`)
-        Logger.list(`Taille: ${stats.size} bytes`)
-        Logger.warn(
-          'Credentials chiffrés - mot de passe requis pour les consulter'
-        )
-        Logger.warn(
-          "Utilisez la commande d'analyse avec Nexus pour tester l'authentification"
-        )
+        Logger.credentials('Informations des credentials:');
+        Logger.list(`Fichier: ${this.credentialsFilePath}`);
+        Logger.list(`Modifié: ${stats.mtime.toLocaleString()}`);
+        Logger.list(`Taille: ${stats.size} bytes`);
+        Logger.warn('Credentials chiffrés - mot de passe requis pour les consulter');
+        Logger.warn("Utilisez la commande d'analyse avec Nexus pour tester l'authentification");
       } else {
-        Logger.error('Aucun credentials trouvés')
-        Logger.warn(
-          'Utilisez une commande nécessitant Nexus pour configurer les credentials'
-        )
+        Logger.error('Aucun credentials trouvés');
+        Logger.warn('Utilisez une commande nécessitant Nexus pour configurer les credentials');
       }
     } catch (error) {
-      Logger.error(`Erreur lors de la lecture des informations: ${error}`)
+      Logger.error(`Erreur lors de la lecture des informations: ${error}`);
     }
+  }
+
+  /**
+   * Chiffre une donnée avec AES-256-CBC
+   */
+  private encryptData(data: string, password: string): string {
+    const algorithm = 'aes-256-cbc';
+    const key = this.deriveKey(password);
+    const iv = randomBytes(16);
+
+    const cipher = createCipheriv(algorithm, key, iv);
+    let encrypted = cipher.update(data, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+
+    // Retourner IV + données chiffrées en base64
+    return Buffer.from(iv.toString('hex') + ':' + encrypted).toString('base64');
+  }
+
+  /**
+   * Déchiffre une donnée avec AES-256-CBC
+   */
+  private decryptData(encryptedData: string, password: string): string {
+    const algorithm = 'aes-256-cbc';
+    const key = this.deriveKey(password);
+
+    try {
+      // Décoder les données base64
+      const combined = Buffer.from(encryptedData, 'base64').toString('utf8');
+      const [ivHex, encrypted] = combined.split(':');
+
+      if (!ivHex || !encrypted) {
+        throw new Error('Format de données chiffrées invalide');
+      }
+
+      const iv = Buffer.from(ivHex, 'hex');
+      const decipher = createDecipheriv(algorithm, key, iv);
+
+      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+
+      return decrypted;
+    } catch (error) {
+      throw new Error(
+        'Impossible de déchiffrer les données - mot de passe incorrect ou données corrompues',
+      );
+    }
+  }
+
+  /**
+   * Dérive une clé de 32 bytes à partir du mot de passe
+   */
+  private deriveKey(password: string): Buffer {
+    const crypto = require('node:crypto');
+    return crypto.scryptSync(password, 'react-metrics-salt', 32);
   }
 }

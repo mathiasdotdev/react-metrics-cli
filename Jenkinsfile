@@ -8,5 +8,6 @@ import fr.maif.digital.core.Context;
 
 libPipeline {
     Context.set(nodeVersion: '22');
+    Context.set(test: 'vitest');
     Context.set(nodePackageManager: 'npm');
 }

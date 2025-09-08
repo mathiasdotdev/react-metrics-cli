@@ -37,24 +37,24 @@ describe('System Configuration', () => {
     it('should set correct binary root directory for Windows', async () => {
       Object.defineProperty(process, 'platform', {
         value: 'win32',
-        configurable: true
+        configurable: true,
       });
-      
+
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
-      
+
       expect(STORAGE_PATHS.BINARY_ROOT_DIR).toBe('\\mock\\home\\.nexus-utils');
     });
 
     it('should set correct binary root directory for Unix-like systems', async () => {
       Object.defineProperty(process, 'platform', {
         value: 'linux',
-        configurable: true
+        configurable: true,
       });
 
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
-      
+
       // On Windows, les paths utilisent des backslashes même si on mock os.homedir
       expect(STORAGE_PATHS.BINARY_ROOT_DIR).toMatch(/[\/\\]mock[\/\\]home[\/\\]\.nexus-utils/);
     });
@@ -62,7 +62,7 @@ describe('System Configuration', () => {
     it('should set correct paths for token and config files', async () => {
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
-      
+
       expect(STORAGE_PATHS.CREDENTIALS_FILE).toContain('.credentials');
       expect(STORAGE_PATHS.CONFIG_FILE).toContain('react-metrics.json');
       expect(STORAGE_PATHS.CACHE_DIR).toContain('cache');
@@ -80,18 +80,19 @@ describe('System Configuration', () => {
 
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
-      
+
       expect(STORAGE_PATHS.BINARY_FILENAME).toBe('windows-amd64.exe');
     });
 
-    it('should generate correct filename for Windows ARM64', async () => {
+    it('should throw error for unsupported Windows ARM64', async () => {
       Object.defineProperty(process, 'platform', { value: 'win32' });
       Object.defineProperty(process, 'arch', { value: 'arm64' });
 
       vi.resetModules();
-      const { STORAGE_PATHS } = await import('../System');
-      
-      expect(STORAGE_PATHS.BINARY_FILENAME).toBe('windows-arm64-1.0.0.exe');
+
+      await expect(async () => {
+        await import('../System');
+      }).rejects.toThrow('Architecture Windows non supportée: arm64');
     });
 
     it('should generate correct filename for macOS x64', async () => {
@@ -100,18 +101,19 @@ describe('System Configuration', () => {
 
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
-      
+
       expect(STORAGE_PATHS.BINARY_FILENAME).toBe('darwin-amd64.bin');
     });
 
-    it('should generate correct filename for Linux ARM64', async () => {
+    it('should throw error for unsupported Linux ARM64', async () => {
       Object.defineProperty(process, 'platform', { value: 'linux' });
       Object.defineProperty(process, 'arch', { value: 'arm64' });
 
       vi.resetModules();
-      const { STORAGE_PATHS } = await import('../System');
-      
-      expect(STORAGE_PATHS.BINARY_FILENAME).toBe('linux-arm64-1.0.0.bin');
+
+      await expect(async () => {
+        await import('../System');
+      }).rejects.toThrow('Architecture Linux non supportée: arm64');
     });
 
     it('should throw error for unsupported platform', async () => {
@@ -131,7 +133,7 @@ describe('System Configuration', () => {
       vi.resetModules();
 
       const { ENCRYPTION_CONFIG } = await import('../System');
-      
+
       expect(ENCRYPTION_CONFIG).toBeDefined();
       expect(ENCRYPTION_CONFIG.SECRET_KEY).toBe('test-secret-key');
     });
@@ -141,7 +143,7 @@ describe('System Configuration', () => {
       vi.resetModules();
 
       const { ENCRYPTION_CONFIG } = await import('../System');
-      
+
       expect(ENCRYPTION_CONFIG).toBeDefined();
       expect(ENCRYPTION_CONFIG.SECRET_KEY).toBe('react-metrics-secret-key-2024');
     });
@@ -152,7 +154,7 @@ describe('System Configuration', () => {
       vi.resetModules();
 
       const { TIMEOUTS } = await import('../System');
-      
+
       expect(TIMEOUTS).toBeDefined();
       expect(TIMEOUTS.DOWNLOAD).toBe(500000);
       expect(TIMEOUTS.EXECUTION).toBe(800000);
@@ -164,7 +166,7 @@ describe('System Configuration', () => {
       vi.resetModules();
 
       const { TIMEOUTS } = await import('../System');
-      
+
       expect(TIMEOUTS).toBeDefined();
       expect(TIMEOUTS.DOWNLOAD).toBe(300000);
       expect(TIMEOUTS.EXECUTION).toBe(600000);
@@ -178,7 +180,7 @@ describe('System Configuration', () => {
       vi.resetModules();
 
       const { NEXUS_CONFIG } = await import('../System');
-      
+
       expect(NEXUS_CONFIG).toBeDefined();
       expect(NEXUS_CONFIG.URL_LOCAL).toBe('http://custom-local:9090');
       expect(NEXUS_CONFIG.URL_PROD).toBe('https://custom-nexus.com');
@@ -191,9 +193,9 @@ describe('System Configuration', () => {
     it('should return true when NODE_ENV is local', async () => {
       process.env.NODE_ENV = 'local';
       vi.resetModules();
-      
+
       const { isLocalEnvironment } = await import('../System');
-      
+
       expect(isLocalEnvironment()).toBe(true);
     });
 
@@ -201,9 +203,9 @@ describe('System Configuration', () => {
       process.env.NODE_ENV = 'prod';
       process.env.NEXUS_LOCAL = 'true';
       vi.resetModules();
-      
+
       const { isLocalEnvironment } = await import('../System');
-      
+
       expect(isLocalEnvironment()).toBe(true);
     });
 
@@ -211,9 +213,9 @@ describe('System Configuration', () => {
       process.env.NODE_ENV = 'prod';
       delete process.env.NEXUS_LOCAL;
       vi.resetModules();
-      
+
       const { isLocalEnvironment } = await import('../System');
-      
+
       expect(isLocalEnvironment()).toBe(false);
     });
   });
@@ -222,9 +224,9 @@ describe('System Configuration', () => {
     it('should extract version from binary filename', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(false);
       vi.resetModules();
-      
+
       const { CURRENT_VERSION } = await import('../System');
-      
+
       // Quand le fichier n'existe pas, la version par défaut est retournée
       expect(typeof CURRENT_VERSION).toBe('string');
       expect(CURRENT_VERSION).toBe('1.0.0');
@@ -237,18 +239,18 @@ describe('System Configuration', () => {
       Object.defineProperty(process, 'platform', { value: 'win32' });
       Object.defineProperty(process, 'arch', { value: 'x64' });
       vi.resetModules();
-      
+
       const { DOWNLOAD_URLS } = await import('../System');
-      
+
       const mockConfig = {
         repositoryUrl: 'https://nexus.example.com/repository',
         repository: 'test-repo',
         group: 'com.example',
-        token: 'test-token'
+        token: 'test-token',
       };
-      
+
       const url = DOWNLOAD_URLS.getDownloadUrl(mockConfig, '1.2.3');
-      
+
       expect(url).toContain('https://nexus.example.com/repository');
       expect(url).toContain('com.example');
       expect(url).toContain('react-metrics');

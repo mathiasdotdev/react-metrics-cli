@@ -1,26 +1,33 @@
 {
   "compilerOptions": {
+    // 🎯 ciblage et compatibilité
     "target": "ES2022",
+    "lib": ["ES2022"],
     "module": "CommonJS",
     "moduleResolution": "node",
-    "lib": ["ES2022"],
-    "outDir": "./dist",
+    "types": ["node"],
+
+    // 📦 structure du projet
     "rootDir": "./src",
+    "outDir": "./dist",
+
+    // 🔒 sécurité et qualité
     "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": true,
     "forceConsistentCasingInFileNames": true,
+    "noEmitOnError": true,
+
+    // 🔄 interopérabilité et compatibilité modules
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+
+    // 📝 génération de fichiers utiles
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts"
-  ]
-} 
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

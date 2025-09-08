@@ -1,5 +1,37 @@
-import chalk from 'chalk'
+import pino from 'pino';
 
+// Configuration conditionnelle : pas de transport en mode test
+const isTestMode = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
+
+const logger = pino({
+  ...(isTestMode
+    ? {
+        // En mode test : logs silencieux
+        level: 'silent',
+      }
+    : {
+        // En mode normal : transport coloré pour CLI avec niveau debug
+        level: 'debug',
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            ignore: 'pid,hostname,time',
+            // Format simple sans timestamp pour les logs utilisateur
+            messageFormat: '{msg}',
+            singleLine: true,
+            hideObject: true,
+            // Options pour gérer les problèmes d'encodage
+            crlf: false,
+            messageKey: 'msg',
+            // Éviter les caractères de contrôle problématiques
+            sync: false,
+          },
+        },
+      }),
+});
+
+// Export des niveaux pour compatibilité
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -8,100 +40,102 @@ export enum LogLevel {
   ERROR = 4,
 }
 
+// Wrapper pour conserver l'interface existante tout en utilisant Pino
 export class Logger {
-  private static currentLevel: LogLevel = LogLevel.INFO
+  private static currentLevel: LogLevel = LogLevel.DEBUG;
 
   static setLevel(level: LogLevel): void {
-    Logger.currentLevel = level
+    Logger.currentLevel = level;
+    const pinoLevels = ['debug', 'info', 'info', 'warn', 'error'];
+    logger.level = pinoLevels[level] || 'debug';
   }
 
   static newLine(): void {
-    console.log('\n')
+    console.log('\n');
   }
 
   static debug(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.DEBUG) {
-      console.log(chalk.gray('🐛'), message, ...args)
+      logger.debug(`🐛 ${message}`, ...args);
     }
   }
 
   static log(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.INFO) {
-      console.log(chalk.gray(message), ...args)
+      console.log(message, ...args);
     }
   }
 
   static info(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.INFO) {
-      console.log(chalk.blue('💡'), message, ...args)
+      logger.info(`💡 ${message}`, ...args);
     }
   }
 
   static success(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.SUCCESS) {
-      console.log(chalk.green('✅'), message, ...args)
+      logger.info(`✅ ${message}`, ...args);
     }
   }
 
   static warn(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.WARN) {
-      console.log(chalk.yellow('⚠️'), message, ...args)
+      logger.warn(`⚠️ ${message}`, ...args);
     }
   }
 
   static error(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.ERROR) {
-      console.error(chalk.red('❌'), message, ...args)
+      logger.error(`❌ ${message}`, ...args);
     }
   }
 
-  // Méthodes spécialisées avec icônes
+  // Méthodes spécialisées avec icônes - utilisant Pino
   static credentials(message: string, ...args: any[]): void {
-    console.log(chalk.blue('🔑'), message, ...args)
+    logger.info(`🔑 ${message}`, ...args);
   }
 
   static download(message: string, ...args: any[]): void {
-    console.log(chalk.blue('⬇️'), message, ...args)
+    logger.info(`⬇️ ${message}`, ...args);
   }
 
   static config(message: string, ...args: any[]): void {
-    console.log(chalk.cyan('🔐'), message, ...args)
+    logger.info(`🔐 ${message}`, ...args);
   }
 
   static files(message: string, ...args: any[]): void {
-    console.log(chalk.green('📁'), message, ...args)
+    logger.info(`📁 ${message}`, ...args);
   }
 
   static cleanup(message: string, ...args: any[]): void {
-    console.log(chalk.yellow('🗑️'), message, ...args)
+    logger.warn(`🗑️ ${message}`, ...args);
   }
 
   static settings(message: string, ...args: any[]): void {
-    console.log(chalk.blue('⚙️'), message, ...args)
+    logger.info(`⚙️ ${message}`, ...args);
   }
 
   static analysis(message: string, ...args: any[]): void {
-    console.log(chalk.cyan('🔍'), message, ...args)
+    logger.info(`🔍 ${message}`, ...args);
   }
 
   static examples(message: string, ...args: any[]): void {
-    console.log(chalk.cyan('✍️'), message, ...args)
+    logger.info(`✍️ ${message}`, ...args);
   }
 
   static report(message: string, ...args: any[]): void {
-    console.log(chalk.cyan('📊'), message, ...args)
+    logger.info(`📊 ${message}`, ...args);
   }
 
   static list(message: string, ...args: any[]): void {
-    console.log('\t' + chalk.gray('➖'), message, ...args)
+    logger.info(`\t➖ ${message}`, ...args);
   }
 
   // Méthode pour les messages avec couleur personnalisée
-  static colored(
-    color: keyof typeof chalk,
-    message: string,
-    ...args: any[]
-  ): void {
-    console.log((chalk as any)[color](message), ...args)
+  static colored(color: string, message: string, ...args: any[]): void {
+    logger.info(message, ...args);
   }
 }
+
+// Export de l'instance pino pour usage direct si nécessaire
+export { logger };

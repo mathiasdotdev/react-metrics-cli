@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi } from 'vitest';
 
 // Mock Logger au niveau du fichier
 vi.mock('../../ui/logger/Logger', () => ({
@@ -22,14 +22,14 @@ vi.mock('../../ui/logger/Logger', () => ({
     files: vi.fn(),
     settings: vi.fn(),
     report: vi.fn(),
-    examples: vi.fn()
-  }
-}))
+    examples: vi.fn(),
+  },
+}));
 
-import { ConfigCommand } from '../Config'
-import { mockConsole, TEST_TIMEOUT } from '../../__tests__/helpers/testSetup'
-import { ConfigManager } from '../../core/config/ConfigManager'
-import { Logger } from '../../ui/logger/Logger'
+import { ConfigCommand } from '../Config';
+import { mockConsole, TEST_TIMEOUT } from '../../__tests__/helpers/testSetup';
+import { ConfigManager } from '../../core/config/ConfigManager';
+import { Logger } from '../../ui/logger/Logger';
 
 // Mock ConfigManager
 vi.mock('../../core/config/ConfigManager', () => ({
@@ -37,107 +37,123 @@ vi.mock('../../core/config/ConfigManager', () => ({
     configExists: vi.fn(),
     loadConfig: vi.fn(),
     initConfig: vi.fn(),
-    getConfigPath: vi.fn(() => '/home/user/.nexus-utils/react-metrics.json')
-  }
-}))
+    getConfigPath: vi.fn(() => '/home/user/.nexus-utils/react-metrics.json'),
+  },
+}));
 
 describe('ConfigCommand', () => {
-  let configCommand: ConfigCommand
-  let consoleMocks: ReturnType<typeof mockConsole>
+  let configCommand: ConfigCommand;
+  let consoleMocks: ReturnType<typeof mockConsole>;
 
   beforeEach(() => {
-    consoleMocks = mockConsole()
-    configCommand = new ConfigCommand()
-    vi.clearAllMocks()
-  })
+    consoleMocks = mockConsole();
+    configCommand = new ConfigCommand();
+    vi.clearAllMocks();
+  });
 
   afterEach(() => {
-    consoleMocks.restore()
-    vi.restoreAllMocks()
-  })
+    consoleMocks.restore();
+    vi.restoreAllMocks();
+  });
 
-  it('should show info when info option is true', async () => {
-    const mockConfig = {
-      fileExtensions: ['.js', '.tsx'],
-      maxGoroutines: 20,
-      ignoredFolders: ['node_modules'],
-      otherIgnoredFolders: [],
-      ignoreAnnotations: true,
-      reports: { terminal: true, html: false, json: false },
-      analysis: { 
-        constants: true, 
-        functions: true, 
-        classes: true, 
-        props: true, 
-        consoles: true, 
-        imports: true, 
-        dependencies: false 
-      }
-    }
-    
-    vi.mocked(ConfigManager.configExists).mockReturnValue(true)
-    vi.mocked(ConfigManager.loadConfig).mockReturnValue(mockConfig)
+  it(
+    'should show info when info option is true',
+    async () => {
+      const mockConfig = {
+        fileExtensions: ['.js', '.tsx'],
+        maxGoroutines: 20,
+        ignoredFolders: ['node_modules'],
+        otherIgnoredFolders: [],
+        ignoreAnnotations: true,
+        reports: { terminal: true, html: false, json: false },
+        analysis: {
+          constants: true,
+          functions: true,
+          classes: true,
+          props: true,
+          consoles: true,
+          imports: true,
+          dependencies: false,
+        },
+      };
 
-    await configCommand.execute({ info: true })
+      vi.mocked(ConfigManager.configExists).mockReturnValue(true);
+      vi.mocked(ConfigManager.loadConfig).mockReturnValue(mockConfig);
 
-    expect(Logger.info).toHaveBeenCalledWith(
-      expect.stringContaining('Informations de configuration React-Metrics')
-    )
-    expect(Logger.list).toHaveBeenCalledWith(
-      expect.stringContaining('Extensions de fichiers: .js, .tsx')
-    )
-  }, TEST_TIMEOUT)
+      await configCommand.execute({ info: true });
 
-  it('should initialize configuration when init option is true', async () => {
-    vi.mocked(ConfigManager.configExists).mockReturnValue(false)
+      expect(Logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Informations de configuration React-Metrics'),
+      );
+      expect(Logger.list).toHaveBeenCalledWith(
+        expect.stringContaining('Extensions de fichiers: .js, .tsx'),
+      );
+    },
+    TEST_TIMEOUT,
+  );
 
-    await configCommand.execute({ init: true })
+  it(
+    'should initialize configuration when init option is true',
+    async () => {
+      vi.mocked(ConfigManager.configExists).mockReturnValue(false);
 
-    expect(ConfigManager.initConfig).toHaveBeenCalled()
-    expect(Logger.success).toHaveBeenCalledWith(
-      expect.stringContaining('Fichier de configuration initialisé')
-    )
-  }, TEST_TIMEOUT)
+      await configCommand.execute({ init: true });
 
-  it('should show config help by default', async () => {
-    vi.mocked(ConfigManager.configExists).mockReturnValue(true)
+      expect(ConfigManager.initConfig).toHaveBeenCalled();
+      expect(Logger.success).toHaveBeenCalledWith(
+        expect.stringContaining('Fichier de configuration initialisé'),
+      );
+    },
+    TEST_TIMEOUT,
+  );
 
-    await configCommand.execute({})
+  it(
+    'should show config help by default',
+    async () => {
+      vi.mocked(ConfigManager.configExists).mockReturnValue(true);
 
-    expect(Logger.settings).toHaveBeenCalledWith(
-      expect.stringContaining('Configuration React-Metrics')
-    )
-    expect(Logger.settings).toHaveBeenCalledWith(
-      expect.stringContaining('Options disponibles:')
-    )
-    expect(Logger.files).toHaveBeenCalledWith(
-      expect.stringContaining('Emplacement:')
-    )
-  }, TEST_TIMEOUT)
+      await configCommand.execute({});
 
-  it('should show warning when no config file exists', async () => {
-    vi.mocked(ConfigManager.configExists).mockReturnValue(false)
+      expect(Logger.settings).toHaveBeenCalledWith(
+        expect.stringContaining('Configuration React-Metrics'),
+      );
+      expect(Logger.settings).toHaveBeenCalledWith(expect.stringContaining('Options disponibles:'));
+      expect(Logger.files).toHaveBeenCalledWith(expect.stringContaining('Emplacement:'));
+    },
+    TEST_TIMEOUT,
+  );
 
-    await configCommand.execute({})
+  it(
+    'should show warning when no config file exists',
+    async () => {
+      vi.mocked(ConfigManager.configExists).mockReturnValue(false);
 
-    expect(Logger.warn).toHaveBeenCalledWith(
-      expect.stringContaining('Aucun fichier de configuration trouvé')
-    )
-    expect(Logger.log).toHaveBeenCalledWith(
-      expect.stringContaining('💡 Utilisez --init pour créer')
-    )
-  }, TEST_TIMEOUT)
+      await configCommand.execute({});
 
-  it('should show warning when init overwrites existing config', async () => {
-    vi.mocked(ConfigManager.configExists).mockReturnValue(true)
+      expect(Logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Aucun fichier de configuration trouvé'),
+      );
+      expect(Logger.log).toHaveBeenCalledWith(
+        expect.stringContaining('💡 Utilisez --init pour créer'),
+      );
+    },
+    TEST_TIMEOUT,
+  );
 
-    await configCommand.execute({ init: true })
+  it(
+    'should show warning when init overwrites existing config',
+    async () => {
+      vi.mocked(ConfigManager.configExists).mockReturnValue(true);
 
-    expect(Logger.warn).toHaveBeenCalledWith(
-      expect.stringContaining('Un fichier de configuration existe déjà')
-    )
-    expect(Logger.log).toHaveBeenCalledWith(
-      expect.stringContaining('Le fichier existant va être remplacé')
-    )
-  }, TEST_TIMEOUT)
-})
+      await configCommand.execute({ init: true });
+
+      expect(Logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('Un fichier de configuration existe déjà'),
+      );
+      expect(Logger.log).toHaveBeenCalledWith(
+        expect.stringContaining('Le fichier existant va être remplacé'),
+      );
+    },
+    TEST_TIMEOUT,
+  );
+});

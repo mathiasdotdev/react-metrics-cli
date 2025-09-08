@@ -1,140 +1,140 @@
-import { beforeAll, describe, it } from 'vitest'
+import { beforeAll, describe, it } from 'vitest';
 import {
   CLITestRunner,
   expectErrorExit,
   expectOutputContains,
   expectSuccessfulExit,
-} from '../helpers/cliTestRunner'
-import { TEST_TIMEOUT } from '../helpers/testSetup'
+} from '../helpers/cliTestRunner';
+import { TEST_TIMEOUT } from '../helpers/testSetup';
 
 describe('CLI Integration Tests - Basic', () => {
-  let cliRunner: CLITestRunner
+  let cliRunner: CLITestRunner;
 
   beforeAll(async () => {
     // Build the CLI first
-    const { spawn } = require('child_process')
+    const { spawn } = require('child_process');
 
     // Use npm.cmd on Windows, npm on Unix
-    const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+    const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
     await new Promise<void>((resolve, reject) => {
       const buildProcess = spawn(npmCmd, ['run', 'build'], {
         cwd: process.cwd(),
         shell: true, // Ensure shell is used for Windows
-      })
+      });
 
       buildProcess.on('close', (code: number) => {
-        if (code === 0) resolve()
-        else reject(new Error(`Build failed with code ${code}`))
-      })
+        if (code === 0) resolve();
+        else reject(new Error(`Build failed with code ${code}`));
+      });
 
       buildProcess.on('error', (error: Error) => {
-        reject(error)
-      })
-    })
+        reject(error);
+      });
+    });
 
-    cliRunner = new CLITestRunner()
-  }, 30000)
+    cliRunner = new CLITestRunner();
+  }, 30000);
 
   it(
     'should display help when --help flag is used',
     async () => {
-      const result = await cliRunner.testHelp()
+      const result = await cliRunner.testHelp();
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'React Metrics CLI')
-      expectOutputContains(result, 'Commandes disponibles')
-      expectOutputContains(result, 'analyze')
-      expectOutputContains(result, 'coverage')
-      expectOutputContains(result, 'download')
-      expectOutputContains(result, 'config')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'React Metrics CLI');
+      expectOutputContains(result, 'Commandes disponibles');
+      expectOutputContains(result, 'analyze');
+      expectOutputContains(result, 'coverage');
+      expectOutputContains(result, 'download');
+      expectOutputContains(result, 'config');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should display version when --version flag is used',
     async () => {
-      const result = await cliRunner.testVersion()
+      const result = await cliRunner.testVersion();
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, '1.12.0')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, '0.15.0');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should display quick help when no arguments provided',
     async () => {
-      const result = await cliRunner.run()
+      const result = await cliRunner.run();
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'React Metrics CLI')
-      expectOutputContains(result, 'État de la configuration')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'React Metrics CLI');
+      expectOutputContains(result, 'État de la configuration');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should handle invalid command gracefully',
     async () => {
-      const result = await cliRunner.run({ args: ['invalid-command'] })
+      const result = await cliRunner.run({ args: ['invalid-command'] });
 
-      expectErrorExit(result)
+      expectErrorExit(result);
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should show analyze command help',
     async () => {
-      const result = await cliRunner.run({ args: ['analyze', '--help'] })
+      const result = await cliRunner.run({ args: ['analyze', '--help'] });
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'analyze')
-      expectOutputContains(result, '--debug')
-      expectOutputContains(result, '--local')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'analyze');
+      expectOutputContains(result, '--debug');
+      expectOutputContains(result, '--local');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should show coverage command help',
     async () => {
-      const result = await cliRunner.run({ args: ['coverage', '--help'] })
+      const result = await cliRunner.run({ args: ['coverage', '--help'] });
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'coverage')
-      expectOutputContains(result, '--html')
-      expectOutputContains(result, '--local')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'coverage');
+      expectOutputContains(result, '--html');
+      expectOutputContains(result, '--local');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should show download command help',
     async () => {
-      const result = await cliRunner.run({ args: ['download', '--help'] })
+      const result = await cliRunner.run({ args: ['download', '--help'] });
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'download')
-      expectOutputContains(result, '--version')
-      expectOutputContains(result, '--groupId')
-      expectOutputContains(result, '--artifactId')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'download');
+      expectOutputContains(result, '--version');
+      expectOutputContains(result, '--groupId');
+      expectOutputContains(result, '--artifactId');
     },
-    TEST_TIMEOUT
-  )
+    TEST_TIMEOUT,
+  );
 
   it(
     'should show config command help',
     async () => {
-      const result = await cliRunner.run({ args: ['config', '--help'] })
+      const result = await cliRunner.run({ args: ['config', '--help'] });
 
-      expectSuccessfulExit(result)
-      expectOutputContains(result, 'config')
-      expectOutputContains(result, '--info')
-      expectOutputContains(result, '--reset')
+      expectSuccessfulExit(result);
+      expectOutputContains(result, 'config');
+      expectOutputContains(result, '--info');
+      expectOutputContains(result, '--reset');
     },
-    TEST_TIMEOUT
-  )
-})
+    TEST_TIMEOUT,
+  );
+});

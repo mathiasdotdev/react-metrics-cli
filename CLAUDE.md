@@ -45,6 +45,7 @@ In Added, you only put new features that don't exist in the previous version. In
 ### Binary Management
 
 The CLI downloads platform-specific Go binaries (Windows/Linux/macOS, x64/ARM64) and stores them in:
+
 - Windows: `C:\react-metrics\`
 - Linux/macOS: `/usr/local/react-metrics/`
 
