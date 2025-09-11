@@ -68,67 +68,67 @@ export class Logger {
 
   static info(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.INFO) {
-      logger.info(`💡 ${message}`, ...args);
+  logger.info(`💡 ${message}`);
     }
   }
 
   static success(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.SUCCESS) {
-      logger.info(`✅ ${message}`, ...args);
+  logger.info(`✅ ${message}`);
     }
   }
 
   static warn(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.WARN) {
-      logger.warn(`⚠️ ${message}`, ...args);
+  logger.warn(`⚠️ ${message}`);
     }
   }
 
   static error(message: string, ...args: any[]): void {
     if (Logger.currentLevel <= LogLevel.ERROR) {
-      logger.error(`❌ ${message}`, ...args);
+  logger.error(`❌ ${message}`);
     }
   }
 
   // Méthodes spécialisées avec icônes - utilisant Pino
   static credentials(message: string, ...args: any[]): void {
-    logger.info(`🔑 ${message}`, ...args);
+  logger.info(`🔑 ${message}`);
   }
 
   static download(message: string, ...args: any[]): void {
-    logger.info(`⬇️ ${message}`, ...args);
+  logger.info(`⬇️ ${message}`);
   }
 
   static config(message: string, ...args: any[]): void {
-    logger.info(`🔐 ${message}`, ...args);
+  logger.info(`🔐 ${message}`);
   }
 
   static files(message: string, ...args: any[]): void {
-    logger.info(`📁 ${message}`, ...args);
+  logger.info(`📁 ${message}`);
   }
 
   static cleanup(message: string, ...args: any[]): void {
-    logger.warn(`🗑️ ${message}`, ...args);
+  logger.warn(`🗑️ ${message}`);
   }
 
   static settings(message: string, ...args: any[]): void {
-    logger.info(`⚙️ ${message}`, ...args);
+  logger.info(`⚙️ ${message}`);
   }
 
   static analysis(message: string, ...args: any[]): void {
-    logger.info(`🔍 ${message}`, ...args);
+  logger.info(`🔍 ${message}`);
   }
 
   static examples(message: string, ...args: any[]): void {
-    logger.info(`✍️ ${message}`, ...args);
+  logger.info(`✍️ ${message}`);
   }
 
   static report(message: string, ...args: any[]): void {
-    logger.info(`📊 ${message}`, ...args);
+  logger.info(`📊 ${message}`);
   }
 
   static list(message: string, ...args: any[]): void {
-    logger.info(`\t➖ ${message}`, ...args);
+  logger.info(`\t➖ ${message}`);
   }
 
   // Méthode pour les messages avec couleur personnalisée

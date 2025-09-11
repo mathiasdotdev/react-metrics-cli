@@ -27,7 +27,7 @@ function extractVersionFromBinary(binaryPath: string): string {
     // Pour les noms simplifiés comme "windows-amd64.exe", on ne peut pas détecter la version
     // depuis le nom. On va utiliser une version par défaut ou la récupérer ailleurs
     const match = filename.match(/react-metrics-([\d.]+)-/) || filename.match(/([\d.]+)/);
-    return match ? match[1] : '1.0.0';
+  return match && match[1] ? match[1] : '1.0.0';
   } catch (error) {
     Logger.warn('Impossible de détecter la version du binaire:', error);
     return '1.0.0';
@@ -110,17 +110,13 @@ export interface NexusConfig {
 }
 
 export const NEXUS_CONFIG = {
-  URL_LOCAL: process.env.NEXUS_URL_LOCAL || 'http://localhost:8081',
-  URL_PROD: process.env.NEXUS_URL_PROD || 'https://nexus.maif.io',
-  USERNAME_LOCAL: process.env.NEXUS_USERNAME_LOCAL || 'admin',
-  PASSWORD_LOCAL: process.env.NEXUS_PASSWORD_LOCAL || 'admin123',
+  URL: process.env.NEXUS_URL_PROD || 'https://nexus.maif.io',
   REPOSITORY: process.env.NEXUS_REPOSITORY || 'react-metrics-artefacts',
   GROUP_ID: process.env.NEXUS_GROUP_ID || 'com.maif.react-metrics',
 };
 
-export const isLocalEnvironment = () => {
-  return process.env.NODE_ENV === 'local' || process.env.NEXUS_LOCAL === 'true';
-};
+// Ancienne compatibilité: toujours false désormais (mode local supprimé)
+export const isLocalEnvironment = () => false;
 
 export const ENCRYPTION_CONFIG = {
   SECRET_KEY: process.env.ENCRYPTION_SECRET_KEY || 'react-metrics-secret-key-2024',

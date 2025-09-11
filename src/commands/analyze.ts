@@ -1,13 +1,12 @@
 import { Command } from 'commander';
 import { BinaryExecutor, ExecutionOptions } from '../core/binary/BinaryExecutor';
 import { BinaryManager } from '../core/binary/BinaryManager';
-import { CommandWrapper } from '../ui/wrapper/CommandWrapper';
 import { Logger } from '../ui/logger/Logger';
+import { CommandWrapper } from '../ui/wrapper/CommandWrapper';
 
 export interface AnalyzeCommandOptions {
   path?: string;
   debug?: boolean;
-  local?: boolean;
 }
 
 export class AnalyzeCommand {
@@ -22,12 +21,6 @@ export class AnalyzeCommand {
    */
   async execute(options: AnalyzeCommandOptions): Promise<void> {
     try {
-      // Configurer le mode local si demandé
-      if (options.local) {
-        process.env.NEXUS_LOCAL = 'true';
-        Logger.info('🏠 Mode local activé (Nexus sur localhost:8081)');
-      }
-
       // Télécharger le binaire automatiquement avec la structure simplifiée
       const binaryPath = await this.ensureBinaryAvailable();
 
@@ -88,9 +81,9 @@ export class AnalyzeCommand {
         ) {
           Logger.error('\nÉchec du téléchargement');
           Logger.warn('💡 Serveur Nexus inaccessible');
-          Logger.warn('💡 Vérifiez votre connexion réseau');
-          Logger.warn('💡 Si vous testez en local, définissez: NEXUS_LOCAL=true');
-          Logger.warn('💡 Sinon vérifiez que https://nexus.maif.io est accessible');
+          Logger.warn(
+            '💡 Vérifiez votre connexion réseau ou que https://nexus.maif.io est accessible',
+          );
           throw new Error('Serveur Nexus inaccessible. Vérifiez votre réseau.');
         }
       }
@@ -146,14 +139,12 @@ export function createAnalyzeCommand(): Command {
     .command('analyze [path]')
     .description('Analyse un projet React pour détecter le code mort')
     .option('-d, --debug', 'Activer le mode debug (génère un fichier de log détaillé)')
-    .option('-l, --local', 'Utiliser le serveur Nexus local (localhost:8081)')
-    .action(async (path: string | undefined, options: { debug?: boolean; local?: boolean }) => {
+    .action(async (path: string | undefined, options: { debug?: boolean }) => {
       try {
         const analyzeCommand = new AnalyzeCommand();
         await analyzeCommand.execute({
           path,
           debug: options.debug,
-          local: options.local,
         });
       } catch (error) {
         Logger.error(`Erreur: ${error}`);

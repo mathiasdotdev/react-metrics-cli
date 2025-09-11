@@ -7,7 +7,7 @@ Merci de votre intérêt pour contribuer à React-Metrics CLI !
 ### 1. Fork et cloner
 
 ```bash
-git clone https://github.com/mathias-hadrien/react-metrics-cli.git
+git clone https://github.maif.io/guilde-dev/react-metrics-cli.git
 cd react-metrics-cli
 ```
 

@@ -1,4 +1,5 @@
 import { ChildProcess, spawn } from 'child_process';
+import { expect } from 'vitest';
 
 export interface CLITestResult {
   exitCode: number;

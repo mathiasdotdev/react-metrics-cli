@@ -7,7 +7,6 @@ import { CommandWrapper } from '../ui/wrapper/CommandWrapper';
 export interface CoverageCommandOptions {
   path?: string;
   html?: string;
-  local?: boolean;
 }
 
 export class CoverageCommand {
@@ -22,12 +21,6 @@ export class CoverageCommand {
    */
   async execute(options: CoverageCommandOptions): Promise<void> {
     try {
-      // Configurer le mode local si demandé
-      if (options.local) {
-        process.env.NEXUS_LOCAL = 'true';
-        Logger.log('🏠 Mode local activé (Nexus sur localhost:8081)');
-      }
-
       // Télécharger le binaire automatiquement
       const binaryPath = await this.ensureBinaryAvailable();
 
@@ -123,14 +116,12 @@ export function createCoverageCommand(): Command {
     .command('coverage [path]')
     .description('Analyse la couverture de tests du projet')
     .option('--html <file>', 'Fichier de sortie HTML pour le rapport de coverage')
-    .option('-l, --local', 'Utiliser le serveur Nexus local (localhost:8081)')
-    .action(async (path: string | undefined, options: { html?: string; local?: boolean }) => {
+    .action(async (path: string | undefined, options: { html?: string }) => {
       try {
         const coverageCommand = new CoverageCommand();
         await coverageCommand.execute({
           path,
           html: options.html,
-          local: options.local,
         });
       } catch (error) {
         Logger.error(`Erreur: ${error}`);

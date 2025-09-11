@@ -24,7 +24,6 @@ ${chalk.blue("# Exemples d'analyse:")}
   react-metrics                    Analyser le répertoire courant
   react-metrics ./mon-projet       Analyser un projet spécifique
   react-metrics --debug            Analyser avec logs détaillés
-  react-metrics --local            Utiliser Nexus local (localhost:8081)
 
 ${chalk.blue('# Exemples de couverture:')}
   react-metrics coverage           Analyser la couverture de tests

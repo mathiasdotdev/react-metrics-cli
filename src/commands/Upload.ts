@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { promises as fs, constants } from 'node:fs';
+import { constants, promises as fs } from 'node:fs';
 import * as path from 'path';
 import { TokenManager } from '../core/nexus/TokenManager';
 import { LogoDisplay } from '../ui/display/LogoDisplay';
@@ -114,16 +114,17 @@ export class UploadCommand {
   private async findBinaries(): Promise<BinaryInfo[]> {
     const projectRoot = path.join(__dirname, '..', '..', '..', 'react-metrics');
     const binariesDir = path.join(projectRoot, 'dist', 'binaries');
-
-    if (!(await this.pathExists(binariesDir))) {
+  if (!(await this.pathExists(binariesDir))) {
       return [];
     }
 
     const expectedBinaries = [
       'react-metrics-linux-amd64',
+      'react-metrics-linux-arm64',
       'react-metrics-darwin-amd64',
       'react-metrics-darwin-arm64',
       'react-metrics-windows-amd64.exe',
+      'react-metrics-windows-arm64.exe',
     ];
 
     const binaries: BinaryInfo[] = [];
@@ -131,7 +132,7 @@ export class UploadCommand {
     for (const binaryName of expectedBinaries) {
       const binaryPath = path.join(binariesDir, binaryName);
 
-      if (await this.pathExists(binaryPath)) {
+  if (await this.pathExists(binaryPath)) {
         const stats = await fs.stat(binaryPath);
         const platformArch = this.extractPlatformArch(binaryName);
         const extension = this.getExtension(binaryName);
@@ -155,10 +156,12 @@ export class UploadCommand {
   private extractPlatformArch(binaryName: string): string {
     const patterns = {
       'linux-amd64': 'linux-amd64',
+      'linux-arm64': 'linux-arm64',
       'darwin-amd64': 'darwin-amd64',
       'darwin-arm64': 'darwin-arm64',
       'windows-amd64': 'windows-amd64',
-    };
+      'windows-arm64': 'windows-arm64',
+    } as const;
 
     for (const [pattern, result] of Object.entries(patterns)) {
       if (binaryName.includes(pattern)) {
@@ -185,7 +188,7 @@ export class UploadCommand {
   } {
     const decoded = Buffer.from(base64Token, 'base64').toString('utf8');
     const [username, password] = decoded.split(':');
-    return { username, password };
+  return { username: username || '', password: password || '' };
   }
 
   /**
@@ -243,9 +246,7 @@ export class UploadCommand {
   ): Promise<boolean> {
     try {
       // Structure Maven standard
-      const groupId = 'com.maif.react-metrics';
-      const artifactId = `react-metrics-${binary.platformArch}`;
-      const uploadUrl = `${nexusUrl}/service/rest/v1/components?repository=${repository}`;
+  // Informations Maven (non utilisées dans la simulation)
 
       // Dans un vrai projet, utiliser l'API REST de Nexus ici
       // Pour la démo, on simule un succès
@@ -302,6 +303,7 @@ export class UploadCommand {
       return false;
     }
   }
+
 
   /**
    * Formate la taille en octets

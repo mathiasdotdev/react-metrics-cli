@@ -9,7 +9,6 @@ export interface DownloadCommandOptions {
   artifactId?: string;
   repository?: string;
   format?: string;
-  local?: boolean;
 }
 
 export class DownloadCommand {
@@ -24,11 +23,6 @@ export class DownloadCommand {
    */
   async execute(options: DownloadCommandOptions): Promise<void> {
     try {
-      // Configurer le mode local si demandé
-      if (options.local) {
-        process.env.NEXUS_LOCAL = 'true';
-        Logger.info('Mode local activé (Nexus sur localhost:8081)');
-      }
 
       if (options.groupId || options.artifactId) {
         // Mode avancé avec paramètres personnalisés (ancien comportement)
@@ -81,7 +75,6 @@ export function createDownloadCommand(): Command {
     .option('-a, --artifactId <artifactId>', "ArtifactId Maven de l'artefact (pour usage avancé)")
     .option('-r, --repository <repository>', 'Repository Nexus (pour usage avancé)')
     .option('-f, --format <format>', 'Format Nexus (pour usage avancé)')
-    .option('-l, --local', 'Utiliser le serveur Nexus local (localhost:8081)')
     .action(async (options: DownloadCommandOptions) => {
       const downloadCommand = new DownloadCommand();
       await downloadCommand.execute(options);

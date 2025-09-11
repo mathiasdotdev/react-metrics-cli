@@ -1,6 +1,6 @@
-import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
-import { promises as fs, constants } from 'node:fs';
 import * as inquirer from 'inquirer';
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { constants, promises as fs } from 'node:fs';
 import * as os from 'os';
 import * as path from 'path';
 import { Logger } from '../../ui/logger/Logger';
@@ -220,8 +220,10 @@ export class TokenManager {
   private async validateAuthToken(authToken: string): Promise<boolean> {
     try {
       const decoded = Buffer.from(authToken, 'base64').toString('utf8');
-      const parts = decoded.split(':');
-      return parts.length === 2 && parts[0].length > 0 && parts[1].length > 0;
+  const parts = decoded.split(':');
+  if (parts.length !== 2) return false;
+  const [user, pass] = parts;
+  return !!user && user.length > 0 && !!pass && pass.length > 0;
     } catch {
       return false;
     }

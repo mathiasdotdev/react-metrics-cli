@@ -102,26 +102,6 @@ describe('AnalyzeCommand', () => {
     );
 
     it(
-      'should activate local mode when local option is true',
-      async () => {
-        const mockBinaryManager = createMockBinaryManager();
-        mockBinaryManager.downloadReactMetricsBinary.mockResolvedValue('/path/to/binary');
-        (analyzeCommand as any).binaryManager = mockBinaryManager;
-
-        const mockExecutor = createMockBinaryExecutor('success');
-        vi.doMock('../../core/binary/BinaryExecutor', () => ({
-          BinaryExecutor: vi.fn(() => mockExecutor),
-        }));
-
-        await analyzeCommand.execute({ local: true });
-
-        expect(process.env.NEXUS_LOCAL).toBe('true');
-        expect(Logger.info).toHaveBeenCalledWith(expect.stringContaining('🏠 Mode local activé'));
-      },
-      TEST_TIMEOUT,
-    );
-
-    it(
       'should enable debug mode when debug option is true',
       async () => {
         const mockBinaryManager = createMockBinaryManager();

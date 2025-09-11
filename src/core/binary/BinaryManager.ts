@@ -1,10 +1,9 @@
+import NexusUtils from '@maif/nexus-utils';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import NexusUtils from '../../../../outil-nexus/dist/lib';
-import { downloadNexusArtifact } from '../../../../outil-nexus/dist/lib/downloadNexusArtifact';
 import { Logger } from '../../ui/logger/Logger';
-import { NEXUS_CONFIG, isLocalEnvironment } from '../config/System';
+import { NEXUS_CONFIG } from '../config/System';
 import { TokenManager } from '../nexus/TokenManager';
 
 export class BinaryManager {
@@ -17,31 +16,14 @@ export class BinaryManager {
   /**
    * Configure l'environnement Nexus selon le mode (local/production)
    */
-  private async setupNexusEnvironment(useLocal: boolean = false): Promise<void> {
-    const isLocal = useLocal || isLocalEnvironment();
-
-    if (isLocal) {
-      // Configuration locale
-      process.env.NEXUS_URL = NEXUS_CONFIG.URL_LOCAL;
-      process.env.NEXUS_USERNAME = NEXUS_CONFIG.USERNAME_LOCAL;
-      process.env.NEXUS_PASSWORD = NEXUS_CONFIG.PASSWORD_LOCAL;
-      process.env.NEXUS_LOCAL = 'true';
-    } else {
-      // Configuration production - utiliser le TokenManager
-      process.env.NEXUS_URL = NEXUS_CONFIG.URL_PROD;
-
-      try {
-        // Récupérer l'authentification base64 depuis le TokenManager
-        const authToken = await this.tokenManager.getAuthToken();
-
-        // Le token base64 contient déjà username:password encodé
-        // On peut l'utiliser directement pour l'authentification Basic
-        process.env.NEXUS_AUTH_TOKEN = authToken;
-
-        Logger.credentials('Authentification Nexus configurée');
-      } catch (error) {
-        throw new Error(`Impossible de configurer l'authentification Nexus: ${error}`);
-      }
+  private async setupNexusEnvironment(): Promise<void> {
+    process.env.NEXUS_URL = NEXUS_CONFIG.URL;
+    try {
+      const authToken = await this.tokenManager.getAuthToken();
+      process.env.NEXUS_AUTH_TOKEN = authToken;
+      Logger.credentials('Authentification Nexus configurée');
+    } catch (error) {
+      throw new Error(`Impossible de configurer l'authentification Nexus: ${error}`);
     }
   }
 
@@ -103,13 +85,15 @@ export class BinaryManager {
     );
 
     if (matchingFiles.length > 0) {
-      // Retourner le plus récent (tri par version décroissante)
       matchingFiles.sort((a, b) =>
         b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' }),
       );
-      const binaryPath = path.join(artifactsDir, matchingFiles[0]);
-      Logger.files(`Binaire local trouvé: ${binaryPath}`);
-      return binaryPath;
+      const selected = matchingFiles[0];
+      if (selected) {
+        const binaryPath = path.join(artifactsDir, selected);
+        Logger.files(`Binaire local trouvé: ${binaryPath}`);
+        return binaryPath;
+      }
     }
 
     return null;
@@ -132,8 +116,9 @@ export class BinaryManager {
 
     files.forEach((file) => {
       // Pattern pour extraire la version: commence par un numéro, suivi de points et numéros
-      const versionMatch = file.match(/^(\d+\.\d+\.\d+(?:-\w+)?)/);
-      if (versionMatch) {
+      const versionRegex = /^(\d+\.\d+\.\d+(?:-\w+)?)/;
+      const versionMatch = versionRegex.exec(file);
+      if (versionMatch && versionMatch[1]) {
         versions.add(versionMatch[1]);
       }
     });
@@ -147,7 +132,7 @@ export class BinaryManager {
       b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' }),
     );
 
-    return sortedVersions[0];
+    return sortedVersions[0] || null;
   }
 
   /**
@@ -187,18 +172,14 @@ export class BinaryManager {
 
     // Utilise la librairie outil-nexus pour télécharger l'artefact
     // Structure: group = releases/snapshots, repository = react-metrics-artefacts
-    const result = await downloadNexusArtifact({
+    const result = await NexusUtils.downloadNexusArtifact({
       groupId: groupId || 'com.maif.react-metrics',
       artifactId,
       repository: repository || 'react-metrics-artefacts',
       format: format || 'maven2',
       artifactVersion,
     });
-    if (result && result.filePath) {
-      return result.filePath;
-    } else {
-      return null;
-    }
+    return result?.filePath || null;
   }
 
   /**
@@ -207,12 +188,8 @@ export class BinaryManager {
   async getLatestReactMetricsVersion(): Promise<string | null> {
     try {
       // Utiliser directement l'API REST avec la nouvelle structure Maven standard
-      const nexusUrl = isLocalEnvironment() ? NEXUS_CONFIG.URL_LOCAL : NEXUS_CONFIG.URL_PROD;
-      const authHeader = isLocalEnvironment()
-        ? `Basic ${Buffer.from(
-            `${NEXUS_CONFIG.USERNAME_LOCAL}:${NEXUS_CONFIG.PASSWORD_LOCAL}`,
-          ).toString('base64')}`
-        : `Basic ${process.env.NEXUS_AUTH_TOKEN || ''}`;
+      const nexusUrl = NEXUS_CONFIG.URL;
+      const authHeader = `Basic ${process.env.NEXUS_AUTH_TOKEN || ''}`;
 
       const response = await fetch(
         `${nexusUrl}/service/rest/v1/search/assets?repository=${NEXUS_CONFIG.REPOSITORY}&group=${NEXUS_CONFIG.GROUP_ID}`,
@@ -254,7 +231,7 @@ export class BinaryManager {
         b.localeCompare(a, undefined, { numeric: true, sensitivity: 'base' }),
       );
 
-      return sortedVersions[0];
+      return sortedVersions[0] || null;
     } catch (error) {
       Logger.warn(`Impossible de récupérer la dernière version: ${error}`);
       return null;
@@ -357,15 +334,15 @@ export class BinaryManager {
       Logger.info(`  - Artifact: ${artifactId}`);
       Logger.info(`  - Version: ${targetVersion}`);
 
-      const result = await downloadNexusArtifact({
+      const result = await NexusUtils.downloadNexusArtifact({
         groupId: NEXUS_CONFIG.GROUP_ID,
-        artifactId: `react-metrics-${artifactId}`, // react-metrics-windows-amd64
+        artifactId: `react-metrics-${artifactId}`,
         repository: NEXUS_CONFIG.REPOSITORY,
         format: 'maven2',
-        artifactVersion: targetVersion, // Version sémantique (1.8.0)
+        artifactVersion: targetVersion,
       });
 
-      if (result && result.filePath) {
+      if (result?.filePath) {
         Logger.success(`Binaire téléchargé: ${result.filePath}`);
         return result.filePath;
       } else {

@@ -93,7 +93,6 @@ describe('CLI Integration Tests - Basic', () => {
       expectSuccessfulExit(result);
       expectOutputContains(result, 'analyze');
       expectOutputContains(result, '--debug');
-      expectOutputContains(result, '--local');
     },
     TEST_TIMEOUT,
   );
@@ -106,7 +105,6 @@ describe('CLI Integration Tests - Basic', () => {
       expectSuccessfulExit(result);
       expectOutputContains(result, 'coverage');
       expectOutputContains(result, '--html');
-      expectOutputContains(result, '--local');
     },
     TEST_TIMEOUT,
   );

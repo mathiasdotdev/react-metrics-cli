@@ -1,0 +1,14 @@
+*.*
+node_modules
+coverage
+!*.css
+!*.js
+!*.json
+!*.jsx
+!*.sass
+!*.scss
+!*.md
+!*.mdx
+!*.ts
+!*.tsx
+!*.yml

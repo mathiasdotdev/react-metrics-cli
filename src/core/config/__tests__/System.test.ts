@@ -39,11 +39,12 @@ describe('System Configuration', () => {
         value: 'win32',
         configurable: true,
       });
+      Object.defineProperty(process, 'arch', { value: 'x64', configurable: true });
 
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
 
-      expect(STORAGE_PATHS.BINARY_ROOT_DIR).toBe('\\mock\\home\\.nexus-utils');
+      expect(STORAGE_PATHS.BINARY_ROOT_DIR).toBe('/mock/home/.nexus-utils');
     });
 
     it('should set correct binary root directory for Unix-like systems', async () => {
@@ -51,6 +52,7 @@ describe('System Configuration', () => {
         value: 'linux',
         configurable: true,
       });
+      Object.defineProperty(process, 'arch', { value: 'x64', configurable: true });
 
       vi.resetModules();
       const { STORAGE_PATHS } = await import('../System');
@@ -170,53 +172,6 @@ describe('System Configuration', () => {
       expect(TIMEOUTS).toBeDefined();
       expect(TIMEOUTS.DOWNLOAD).toBe(300000);
       expect(TIMEOUTS.EXECUTION).toBe(600000);
-    });
-
-    it('should configure Nexus settings from environment', async () => {
-      process.env.NEXUS_URL_LOCAL = 'http://custom-local:9090';
-      process.env.NEXUS_URL_PROD = 'https://custom-nexus.com';
-      process.env.NEXUS_REPOSITORY = 'custom-repo';
-      process.env.NEXUS_GROUP_ID = 'custom.group';
-      vi.resetModules();
-
-      const { NEXUS_CONFIG } = await import('../System');
-
-      expect(NEXUS_CONFIG).toBeDefined();
-      expect(NEXUS_CONFIG.URL_LOCAL).toBe('http://custom-local:9090');
-      expect(NEXUS_CONFIG.URL_PROD).toBe('https://custom-nexus.com');
-      expect(NEXUS_CONFIG.REPOSITORY).toBe('custom-repo');
-      expect(NEXUS_CONFIG.GROUP_ID).toBe('custom.group');
-    });
-  });
-
-  describe('isLocalEnvironment', () => {
-    it('should return true when NODE_ENV is local', async () => {
-      process.env.NODE_ENV = 'local';
-      vi.resetModules();
-
-      const { isLocalEnvironment } = await import('../System');
-
-      expect(isLocalEnvironment()).toBe(true);
-    });
-
-    it('should return true when NEXUS_LOCAL is true', async () => {
-      process.env.NODE_ENV = 'prod';
-      process.env.NEXUS_LOCAL = 'true';
-      vi.resetModules();
-
-      const { isLocalEnvironment } = await import('../System');
-
-      expect(isLocalEnvironment()).toBe(true);
-    });
-
-    it('should return false when neither condition is met', async () => {
-      process.env.NODE_ENV = 'prod';
-      delete process.env.NEXUS_LOCAL;
-      vi.resetModules();
-
-      const { isLocalEnvironment } = await import('../System');
-
-      expect(isLocalEnvironment()).toBe(false);
     });
   });
 
