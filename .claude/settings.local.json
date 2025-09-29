@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(node:*)",
+      "Bash(npm test:*)",
+      "SlashCommand(/tasks)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -12,7 +12,6 @@ import { CommandWrapper } from './ui/wrapper/CommandWrapper';
 
 // Importer la version depuis package.json
 const packageJson = require('../package.json');
-
 // Configuration du programme principal
 const program = CommandWrapper.createFullCommand()
   .name('react-metrics')

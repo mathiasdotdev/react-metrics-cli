@@ -2,128 +2,50 @@
 
 Merci de votre intérêt pour contribuer à React-Metrics CLI !
 
-## 🔄 Workflow de Contribution
+## 📚 Documentation de Référence
 
-### 1. Fork et cloner
+Cette documentation est organisée en fichiers spécialisés dans `.specify/memory/` pour des informations détaillées :
+
+### **[Workflow de Contribution](.specify/memory/contribution-workflows.md)**
+Détaille le processus complet de contribution :
+- Git workflow avec fork, branches et commits
+- Processus de Pull Request étape par étape
+- Types de contributions (nouvelles commandes, améliorations, corrections)
+- Validation et tests requis avant soumission
+
+### **[Standards de Code](.specify/memory/code-standards.md)**
+Spécifie les exigences techniques et qualité :
+- Standards TypeScript avec mode strict
+- Gestion de versions sémantique et fichiers à mettre à jour
+- Requirements Node.js 22+ et TypeScript 5.3+
+- Configuration de l'environnement de développement et sécurité
+
+### **[Standards de Test](.specify/memory/testing-standards.md)**
+Définit la stratégie de test complète :
+- Framework Vitest et couverture minimum 80%
+- Organisation des tests (unitaires, intégration, contrats)
+- Commandes de test et modes de développement
+- Portes qualité et requirements de performance
+
+## 🚀 Démarrage Rapide
 
 ```bash
+# Cloner et installer
 git clone https://github.maif.io/guilde-dev/react-metrics-cli.git
 cd react-metrics-cli
-```
-
-### 2. Créer une branche
-
-```bash
-git checkout -b feature/ma-fonctionnalite
-# ou
-git checkout -b fix/correction-bug
-```
-
-### 3. Développer
-
-```bash
-# Installer les dépendances
 npm install
 
 # Développer avec auto-reload
 npm run dev
 
-# Build et tests
+# Build et tests avant commit (obligatoire)
 npm run build && npm run test
 ```
 
-### 4. Validation
-
-```bash
-# Tests complets avec couverture
-npm run test:coverage
-
-# Tests d'intégration
-npm run test:integration
-
-# Build optimisé
-npm run build:prod
-```
-
-### 5. Commit et Push
-
-```bash
-git add .
-git commit -m "feat: ajouter nouvelle commande coverage"
-git push origin feature/ma-fonctionnalite
-```
-
-### 6. Pull Request
-
-- Décrire clairement les changements
-- Référencer les issues liées
-- S'assurer que tous les tests passent
-- Mettre à jour la version si nécessaire
-
-## 🎯 Types de Contributions
-
-### Ajouter une nouvelle commande
-
-1. Créer le handler dans `src/commands/`
-2. Ajouter les tests unitaires
-3. Mettre à jour `src/index.ts`
-4. Documenter dans README.md
-
-### Améliorer les fonctionnalités existantes
-
-- Gestion d'erreurs améliorée
-- Interface utilisateur plus intuitive
-- Performance et optimisations
-
-### Corriger des bugs
-
-- Problèmes d'authentification Nexus
-- Erreurs de téléchargement
-- Incompatibilités de plateforme
-
-## 📝 Conventions
-
-### Gestion des versions
-
-Lors de l'incrémentation de version, mettre à jour **3 fichiers** :
-
-- `package.json` - Version principale
-- `CHANGELOG.md` - Nouvelle entrée avec modifications
-- `src/__tests__/integration/cli-basic.test.ts` - Test d'expectation de version
-
-### Structure des tests
-
-- **Tests unitaires** : `src/**/__tests__/*.test.ts`
-- **Tests d'intégration** : `src/__tests__/integration/`
-- **Helpers de test** : `src/__tests__/helpers/`
-
-### Standards de code
-
-- TypeScript strict mode
-- ESLint + Prettier
-- Tests avec Vitest
-- Coverage minimum 80%
-
-## 🐳 Tests avec Nexus local
-
-### Configuration Docker
-
-```bash
-# Utiliser localhost:8081
-export NEXUS_LOCAL=true
-react-metrics analyze --local
-```
-
-### Variables d'environnement de développement
-
-```bash
-# Fichier .env pour tests locaux
-NEXUS_LOCAL=true
-NEXUS_URL=http://localhost:8081
-```
+> **Important** : Consultez les [Standards de Code](.specify/memory/code-standards.md) pour les requirements Node.js 22+ et TypeScript 5.3+, et les [Workflow de Contribution](.specify/memory/contribution-workflows.md) pour le processus complet.
 
 ## 📞 Support
 
-Questions ? Créez une issue ou consultez la documentation existante.
+Questions ? Créez une issue ou consultez la documentation de référence ci-dessus pour des informations détaillées.
 
 Merci de contribuer à React-Metrics CLI ! 🎉

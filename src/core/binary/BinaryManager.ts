@@ -1,7 +1,7 @@
-import NexusUtils from '@maif/nexus-utils';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import NexusUtils from '../../../../outil-nexus/src/lib/index';
 import { Logger } from '../../ui/logger/Logger';
 import { NEXUS_CONFIG } from '../config/System';
 import { TokenManager } from '../nexus/TokenManager';
@@ -171,12 +171,12 @@ export class BinaryManager {
     await this.setupNexusEnvironment();
 
     // Utilise la librairie outil-nexus pour télécharger l'artefact
-    // Structure: group = releases/snapshots, repository = react-metrics-artefacts
+    // Structure Jenkins avec format raw
     const result = await NexusUtils.downloadNexusArtifact({
-      groupId: groupId || 'com.maif.react-metrics',
+      groupId: groupId || 'fr.maif.guilde-dev',
       artifactId,
       repository: repository || 'react-metrics-artefacts',
-      format: format || 'maven2',
+      format: format || 'raw',
       artifactVersion,
     });
     return result?.filePath || null;
@@ -184,15 +184,19 @@ export class BinaryManager {
 
   /**
    * Récupère la dernière version disponible pour react-metrics
+   * @param snapshots Si true, cherche dans snapshots/, sinon dans releases/
    */
-  async getLatestReactMetricsVersion(): Promise<string | null> {
+  async getLatestReactMetricsVersion(snapshots = false): Promise<string | null> {
     try {
-      // Utiliser directement l'API REST avec la nouvelle structure Maven standard
+      // Utiliser directement l'API REST avec la nouvelle structure Jenkins
       const nexusUrl = NEXUS_CONFIG.URL;
       const authHeader = `Basic ${process.env.NEXUS_AUTH_TOKEN || ''}`;
+      const type = snapshots ? 'snapshots' : 'releases';
 
+      // Chercher dans le bon répertoire selon le type
+      const searchPath = `fr/maif/guilde-dev/react-metrics/${type}/`;
       const response = await fetch(
-        `${nexusUrl}/service/rest/v1/search/assets?repository=${NEXUS_CONFIG.REPOSITORY}&group=${NEXUS_CONFIG.GROUP_ID}`,
+        `${nexusUrl}/service/rest/v1/search?repository=${NEXUS_CONFIG.REPOSITORY}&q=${searchPath}`,
         {
           headers: {
             Authorization: authHeader,
@@ -207,19 +211,26 @@ export class BinaryManager {
       const data: any = await response.json();
       const artifacts = data.items || [];
 
-      // Extraire les versions uniques depuis maven2.version
+      // Extraire les versions depuis les chemins des artefacts
       const versions = new Set<string>();
       artifacts.forEach((artifact: any) => {
-        if (
-          artifact.maven2 &&
-          artifact.maven2.artifactId &&
-          artifact.maven2.artifactId.startsWith('react-metrics-') &&
-          artifact.maven2.version
-        ) {
-          const version = artifact.maven2.version;
-          // Filtrer seulement les versions valides (x.x.x format)
-          if (/^\d+\.\d+\.\d+(?:-\w+)?$/.test(version)) {
-            versions.add(version);
+        if (artifact.path) {
+          // Chercher le pattern fr/maif/guilde-dev/react-metrics/{type}/{version}/
+          const pathPattern = new RegExp(`fr/maif/guilde-dev/react-metrics/${type}/([^/]+)/`);
+          const match = artifact.path.match(pathPattern);
+          if (match && match[1]) {
+            const version = match[1];
+            // Filtrer seulement les versions valides et cohérentes avec le type
+            if (/^\d+\.\d+\.\d+(?:-\w+)?$/.test(version)) {
+              const isVersionSnapshot = version.includes('-SNAPSHOT') ||
+                                       version.includes('-rc') ||
+                                       version.includes('-beta') ||
+                                       version.includes('-alpha');
+              // Vérifier que le type correspond à la version
+              if ((snapshots && isVersionSnapshot) || (!snapshots && !isVersionSnapshot)) {
+                versions.add(version);
+              }
+            }
           }
         }
       });
@@ -241,7 +252,7 @@ export class BinaryManager {
   /**
    * Télécharge un binaire react-metrics avec la structure simplifiée
    */
-  async downloadReactMetricsBinary(version?: string): Promise<string | null> {
+  async downloadReactMetricsBinary(version?: string, snapshots?: boolean): Promise<string | null> {
     try {
       // D'abord vérifier si un binaire local existe déjà AVANT de configurer Nexus
       if (!version) {
@@ -263,10 +274,11 @@ export class BinaryManager {
         Logger.info('🔍 Recherche de la dernière version...');
 
         try {
-          const latestVersion = await this.getLatestReactMetricsVersion();
+          const latestVersion = await this.getLatestReactMetricsVersion(snapshots);
           if (latestVersion) {
             targetVersion = latestVersion;
-            Logger.success(`📋 Dernière version trouvée: ${targetVersion}`);
+            const typeLabel = snapshots ? 'snapshot' : 'release';
+            Logger.success(`📋 Dernière version ${typeLabel} trouvée: ${targetVersion}`);
           }
         } catch (error) {
           Logger.warn(`Impossible de détecter automatiquement la version: ${error}`);
@@ -288,59 +300,14 @@ export class BinaryManager {
         }
       }
 
-      // Déterminer le group selon la version (releases pour stable, snapshots pour pre-release)
-      const group =
-        targetVersion &&
-        (targetVersion.includes('-rc') ||
-          targetVersion.includes('-beta') ||
-          targetVersion.includes('-alpha'))
-          ? 'snapshots'
-          : 'releases';
-
-      // Déterminer le nom de fichier simplifié selon la plateforme
-      const platform = process.platform;
-      const arch = process.arch;
-      let artifactId: string;
-
-      switch (platform) {
-        case 'win32':
-          if (arch === 'x64') {
-            artifactId = 'windows-amd64';
-          } else {
-            throw new Error(
-              `Architecture Windows non supportée: ${arch}. Seulement AMD64 est supporté.`,
-            );
-          }
-          break;
-        case 'darwin':
-          artifactId = arch === 'x64' ? 'darwin-amd64' : 'darwin-arm64';
-          break;
-        case 'linux':
-          if (arch === 'x64') {
-            artifactId = 'linux-amd64';
-          } else {
-            throw new Error(
-              `Architecture Linux non supportée: ${arch}. Seulement AMD64 est supporté.`,
-            );
-          }
-          break;
-        default:
-          throw new Error(`Plateforme non supportée: ${platform}-${arch}`);
-      }
 
       Logger.download(`Téléchargement du binaire react-metrics...`);
-      Logger.info(`  - Plateforme: ${platform}-${arch}`);
-      Logger.info(`  - Group: ${group}`);
-      Logger.info(`  - Artifact: ${artifactId}`);
+      Logger.info(`  - Plateforme: ${process.platform}-${process.arch}`);
       Logger.info(`  - Version: ${targetVersion}`);
 
-      const result = await NexusUtils.downloadNexusArtifact({
-        groupId: NEXUS_CONFIG.GROUP_ID,
-        artifactId: `react-metrics-${artifactId}`,
-        repository: NEXUS_CONFIG.REPOSITORY,
-        format: 'maven2',
-        artifactVersion: targetVersion,
-      });
+      // Structure unifiée Jenkins : fr/maif/guilde-dev/react-metrics/{type}/{version}/{binaire}
+      Logger.info(`  - Mode: Structure Jenkins unifiée`);
+      const result = await this.downloadFromJenkinsStructure('', targetVersion);
 
       if (result?.filePath) {
         Logger.success(`Binaire téléchargé: ${result.filePath}`);
@@ -356,23 +323,105 @@ export class BinaryManager {
   }
 
   /**
-   * Exemple d'utilisation : manipulation des artefacts Nexus
+   * Télécharge un binaire depuis la structure Jenkins unifiée
+   * Structure: fr/maif/guilde-dev/react-metrics/{type}/{version}/{binaire}
+   */
+  private async downloadFromJenkinsStructure(
+    platformArch: string,
+    version: string,
+  ): Promise<{ filePath: string } | null> {
+    try {
+      const platform = process.platform;
+      const arch = process.arch;
+
+      // Construire le nom de binaire avec version incluse
+      let platformName: string;
+      let extension = '';
+
+      switch (platform) {
+        case 'win32':
+          platformName = 'windows-amd64';
+          extension = '.exe';
+          break;
+        case 'darwin':
+          platformName = arch === 'x64' ? 'darwin-amd64' : 'darwin-arm64';
+          break;
+        case 'linux':
+          platformName = 'linux-amd64';
+          break;
+        default:
+          throw new Error(`Plateforme non supportée: ${platform}-${arch}`);
+      }
+
+      // Nouveau format : react-metrics-{version}-{platform}-{arch}[.exe]
+      const binaryName = `react-metrics-${version}-${platformName}${extension}`;
+
+      // Déterminer le type (releases/snapshots) selon la version
+      const isSnapshot = version.includes('-SNAPSHOT') ||
+                        version.includes('-rc') ||
+                        version.includes('-beta') ||
+                        version.includes('-alpha');
+      const type = isSnapshot ? 'snapshots' : 'releases';
+
+      // Construire l'URL avec nouvelle structure : fr/maif/guilde-dev/react-metrics/{type}/{version}/{binaire}
+      const nexusUrl = NEXUS_CONFIG.URL;
+      const jenkinsPath = `fr/maif/guilde-dev/react-metrics/${type}/${version}/${binaryName}`;
+      const downloadUrl = `${nexusUrl}/repository/${NEXUS_CONFIG.REPOSITORY}/${jenkinsPath}`;
+
+      Logger.info(`  - Type: ${type}`);
+      Logger.info(`  - URL: ${downloadUrl}`);
+
+      // Utiliser l'API REST de Nexus pour télécharger
+      const authHeader = `Basic ${process.env.NEXUS_AUTH_TOKEN || ''}`;
+
+      const response = await fetch(downloadUrl, {
+        headers: {
+          Authorization: authHeader,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      // Créer le répertoire de destination
+      const artifactsDir = path.join(os.homedir(), '.nexus-utils', 'artifacts');
+      if (!fs.existsSync(artifactsDir)) {
+        fs.mkdirSync(artifactsDir, { recursive: true });
+      }
+
+      // Sauvegarder le binaire (le nom contient déjà la version)
+      const filePath = path.join(artifactsDir, binaryName);
+
+      const buffer = await response.arrayBuffer();
+      fs.writeFileSync(filePath, Buffer.from(buffer));
+
+      // Rendre exécutable sur Unix
+      if (platform !== 'win32') {
+        fs.chmodSync(filePath, 0o755);
+      }
+
+      return { filePath };
+    } catch (error) {
+      Logger.error(`Erreur téléchargement binaire: ${error}`);
+      return null;
+    }
+  }
+
+  /**
+   * Exemple d'utilisation : téléchargement react-metrics
    */
   async exampleUsage() {
-    const groupId = 'fr.maif.digital';
-    const artifactId = 'email-bev';
-    const artifacts = await this.listNexusArtifactsByGA(groupId, artifactId);
-    if (artifacts.length === 0) {
-      Logger.warn('Aucun artefact trouvé.');
-      return;
+    // Télécharger la dernière version release
+    const releasePath = await this.downloadReactMetricsBinary();
+    if (releasePath) {
+      Logger.success(`Version release téléchargée : ${releasePath}`);
     }
-    const latest = await this.getLatestArtifactVersion(groupId, artifactId);
-    Logger.success(`Dernière version trouvée : ${latest}`);
-    const downloadedPath = latest ? await this.downloadArtifact(groupId, artifactId, latest) : null;
-    if (downloadedPath) {
-      Logger.success(`Artefact téléchargé : ${downloadedPath}`);
-    } else {
-      Logger.error('Téléchargement impossible.');
+
+    // Télécharger la dernière version snapshot
+    const snapshotPath = await this.downloadReactMetricsBinary(undefined, true);
+    if (snapshotPath) {
+      Logger.success(`Version snapshot téléchargée : ${snapshotPath}`);
     }
   }
 }

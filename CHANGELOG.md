@@ -2,7 +2,22 @@
 
 ## [Non publiée]
 
-## [0.15.0] - 08/09/2025
+## [0.17.0] - 29/09/2025
+
+### Added
+
+- **Agent Framework** : Intégration complète avec commandes agents (analyze, changelog, clarify, constitution, implement, plan, specify, tasks)
+- **Système Specify** : Framework de développement avec mémoire organisationnelle, scripts et templates pour workflows
+
+### Changed
+
+- **Documentation projet** : Mise à jour des guides de contribution et processus de développement
+
+### Technical
+
+- **Infrastructure de test** : Retrait script test-local.sh remplacé par nouveaux workflows
+
+## [0.16.0] - 08/09/2025
 
 ### Technical
 
@@ -10,13 +25,13 @@
 - **Chiffrement sécurisé amélioré** : Remplacement du chiffrement CryptoJS par AES-256-CBC natif avec IV aléatoire et dérivation de clé scrypt
 - **API promises native** : Migration complète vers `fs.promises` pour toutes les opérations fichiers
 
-## [0.14.0] - 05/09/2025
+## [0.15.0] - 05/09/2025
 
 ### Changed
 
 - **Logger Pino** : Remplacement du système Logger personnalisé par Pino avec niveau debug par défaut et coloré
 
-## [1.13.0] - 29/08/2025
+## [0.14.0] - 29/08/2025
 
 ### Added
 
@@ -170,7 +185,7 @@
 
 ### Added
 
-- **Option `--local`** : Support Nexus local (localhost:8081)
+- **Configuration Nexus** : Support Nexus via variables d'environnement
 - **Détection binaire intelligente** : Cache `~/.nexus-utils/artifacts`
 
 ### Fixed
