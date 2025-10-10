@@ -1,0 +1,59 @@
+# détection des props non utilisées
+
+## cas de détection numéro 1
+
+```tsx
+export const Button = ({ text, onClick, disabled, className, children, test }: ButtonProps) => {
+  const blabla = text || 'continuer';
+  const blabla2 = 'blabla';
+  return (
+    <button onClick={onClick} disabled={disabled} className={`default-button ${className}`}>
+      {blabla}
+      {children}
+    </button>
+  );
+};
+```
+
+ici tu dois analyser et détecter les props dans la déclaration du composant.
+
+tu vas extraire les props utilisées dans le composant : text, onClick, disabled, className, children, test
+
+ensuite tu vérifies dans le corps du composant si les props sont utilisées, et tu supprimes les props qui sont utilisées :
+
+- la props text est utilisée dans le composant car affectée à la constante blabla
+- la props onClick est utilisée dans le composant car passée à l'élément button
+- la props disabled est utilisée dans le composant car passée à l'élément button
+- la props className est utilisée dans le composant car passée à l'élément button
+- la props children est utilisée dans le composant car passée à l'élément button
+- la props test n'est pas utilisée dans le composant
+
+donc en sortie tu dois avoir :
+
+- test: pas utilisée (../src/components/Button.tsx:12)
+
+ici on renseigne le fichier et la ligne où la props est déclarée
+
+## cas de détection numéro 2
+
+```tsx
+export const ButtonSimplified = ({ text, onClick, test }: ButtonProps) => (
+  <button onClick={onClick}>{text}</button>
+);
+```
+
+ici tu dois analyser et détecter les props text, onClick, test. tu dois détecter que :
+
+- la props text est utilisée dans le composant car passée à l'élément button
+- la props onClick est utilisée dans le composant car passée à l'élément button
+- la props test n'est pas utilisée dans le composant
+
+donc en sortie tu dois avoir :
+
+- test: pas utilisée (../src/components/Button.tsx:49)
+
+## points de vigilance
+
+- ici on renseigne le fichier et la ligne où la props est déclarée
+- on ne renseigne JAMAIS les props qui sont définies dans un type ou une interface qui est utilisé dans le composant
+- la détection de props est faite dans un scope restreint : le corps du composant dans laquelle la props est déclarée

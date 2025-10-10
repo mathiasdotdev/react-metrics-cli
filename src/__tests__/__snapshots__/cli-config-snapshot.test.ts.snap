@@ -1,0 +1,107 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`CLI Config Command - Snapshot Tests config --init devrait initialiser le fichier de configuration 1`] = `
+"╭────────────────────────────────────╮
+│         React Metrics CLI          │
+│       Analyseur de code mort       │
+╰────────────────────────────────────╯
+
+
+✅ Fichier de configuration initialisé: C:/Users/mathl/.react-metrics-cli/config.json
+# Modifiez le fichier directement dans votre éditeur"
+`;
+
+exports[`CLI Config Command - Snapshot Tests config --info devrait afficher les informations avec fichier existant 1`] = `
+"╭────────────────────────────────────╮
+│         React Metrics CLI          │
+│       Analyseur de code mort       │
+╰────────────────────────────────────╯
+
+
+💡 Informations de configuration React-Metrics
+
+📁 Fichier: C:/Users/mathl/.react-metrics-cli/config.json
+
+⚙️ Configuration actuelle:
+- Extensions de fichiers: .js, .jsx, .ts, .tsx
+- Dossiers ignorés: node_modules, .git, dist, build, coverage
+- Ignorer annotations: Oui
+📊 Rapports:
+- Terminal: Activé
+- HTML: Désactivé
+- JSON: Désactivé
+🔍 Analyses:
+- Constantes: Activée
+- Fonctions: Activée
+- Classes: Activée
+- Props: Activée
+- Consoles: Activée
+- Definitions: Activée
+- Imports: Activée
+- Exports: Activée
+- Dépendances: Désactivée"
+`;
+
+exports[`CLI Config Command - Snapshot Tests config --info devrait afficher un message si le fichier n'existe pas 1`] = `
+"╭────────────────────────────────────╮
+│         React Metrics CLI          │
+│       Analyseur de code mort       │
+╰────────────────────────────────────╯
+
+
+💡 Informations de configuration React-Metrics
+
+💡 Utilisez 'react-metrics config --init' pour créer un fichier de configuration
+⚠️ Aucun fichier de configuration trouvé"
+`;
+
+exports[`CLI Config Command - Snapshot Tests config (sans option) devrait afficher l'aide de configuration 1`] = `
+"╭────────────────────────────────────╮
+│         React Metrics CLI          │
+│       Analyseur de code mort       │
+╰────────────────────────────────────╯
+
+
+⚙️ Configuration React-Metrics
+
+💡 Utilisez --init pour créer un fichier de configuration
+
+📁 Emplacement: C:/Users/mathl/.react-metrics-cli/config.json
+
+⚙️ Options disponibles:
+- --info              Afficher la configuration actuelle
+- --init              Créer/réinitialiser le fichier de configuration
+- --open              Ouvrir le fichier de configuration dans VS Code
+
+
+⚙️ # Modification manuelle:
+- Ouvrez le fichier dans votre éditeur pour le modifier
+- Le fichier sera automatiquement utilisé par react-metrics
+
+
+✍️ Exemples:
+- react-metrics config --info
+- react-metrics config --init
+- react-metrics config --open
+- code C:/Users/mathl/.react-metrics-cli/config.json
+⚠️ Aucun fichier de configuration trouvé"
+`;
+
+exports[`CLI Config Command - Snapshot Tests config --help devrait afficher l'aide de configuration 1`] = `
+"╭────────────────────────────────────╮
+│         React Metrics CLI          │
+│       Analyseur de code mort       │
+╰────────────────────────────────────╯
+
+# Usage:
+  react-metrics config [options]
+
+# Description:
+  Gérer la configuration React-Metrics
+
+# Options:
+  --init               Initialiser le fichier de configuration avec les valeurs par défaut
+  -i, --info           Afficher les informations de configuration
+  -o, --open           Ouvrir le fichier de configuration dans VS Code
+  -h, --help           display help for command"
+`;

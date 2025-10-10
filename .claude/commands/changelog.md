@@ -28,7 +28,7 @@ Execution steps:
    - Group similar changes together and create concise, meaningful descriptions
    - Focus on user-facing impact for Added/Changed/Fixed categories
 
-3. **Version Calculation**:
+2. **Version Calculation**:
    - Based on change types, suggest semantic version bump:
      - **patch** (x.x.+1): Only fixes and technical changes
      - **minor** (x.+1.0): New features or significant improvements
@@ -36,20 +36,21 @@ Execution steps:
    - Present suggested version to user for confirmation
    - Allow manual version override if needed
 
-4. **Generate Changelog Entry**:
+3. **Generate Changelog Entry**:
    - Create properly formatted entry following existing CHANGELOG.md patterns
    - Structure: `## [VERSION] - YYYY-MM-DD` with current date
    - Organize sections in order: Added, Changed, Fixed, Technical (only include non-empty sections)
    - Use consistent bullet point formatting and descriptive language
    - Maintain existing style conventions (bold keywords, formatting patterns)
 
-5. **Update CHANGELOG.md**:
+4. **Update CHANGELOG.md**:
    - Insert new entry at top of file (after "## [Non publiée]" if present)
    - Preserve all existing content and formatting
    - Show preview of changes before confirming
    - Ask for user approval before writing to file
 
 Behavior Rules:
+
 - **ALWAYS** analyze actual git status and file changes before proceeding
 - **NEVER** assume changes without verification
 - **MUST** follow existing CHANGELOG.md format and conventions
@@ -60,12 +61,14 @@ Behavior Rules:
 - If CHANGELOG.md missing, offer to create using existing project patterns
 
 Error Handling:
+
 - Abort if not in a git repository with clear error message
 - Handle corrupted or malformed CHANGELOG.md gracefully
 - Provide actionable error messages with next steps
 - Skip files that cannot be analyzed (binary, permission issues)
 
 Success Criteria:
+
 - Generated entry matches existing format perfectly
 - All significant changes are captured and categorized correctly
 - Version increment follows semantic versioning principles
@@ -73,6 +76,7 @@ Success Criteria:
 - No existing content is lost or corrupted
 
 Integration with Development Workflow:
+
 - Use this command after completing development work with `/implement` or other feature development
 - Ideal for post-development changelog maintenance following specify workflows
 - Complements project versioning and release processes

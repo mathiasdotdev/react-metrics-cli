@@ -1,5 +1,5 @@
 import { ChildProcess, spawn } from 'child_process';
-import { expect } from 'vitest';
+import { expect } from 'bun:test';
 
 export interface CLITestResult {
   exitCode: number;
@@ -30,7 +30,12 @@ export class CLITestRunner {
    */
   async run(options: CLITestOptions = {}): Promise<CLITestResult> {
     const startTime = Date.now();
-    const { args = [], cwd = process.cwd(), timeout = 30000, env = {} } = options;
+    const {
+      args = [],
+      cwd = process.cwd(),
+      timeout = 30000,
+      env = {},
+    } = options;
 
     return new Promise((resolve, reject) => {
       let stdout = '';
@@ -100,30 +105,15 @@ export class CLITestRunner {
   /**
    * Test une commande d'analyse
    */
-  async testAnalyze(projectPath?: string, options: string[] = []): Promise<CLITestResult> {
+  async testAnalyze(
+    projectPath?: string,
+    options: string[] = [],
+  ): Promise<CLITestResult> {
     const args = ['analyze'];
     if (projectPath) args.push(projectPath);
     args.push(...options);
 
     return this.run({ args });
-  }
-
-  /**
-   * Test une commande de coverage
-   */
-  async testCoverage(projectPath?: string, options: string[] = []): Promise<CLITestResult> {
-    const args = ['coverage'];
-    if (projectPath) args.push(projectPath);
-    args.push(...options);
-
-    return this.run({ args });
-  }
-
-  /**
-   * Test une commande de download
-   */
-  async testDownload(options: string[] = []): Promise<CLITestResult> {
-    return this.run({ args: ['download', ...options] });
   }
 
   /**
@@ -143,10 +133,16 @@ export const expectErrorExit = (result: CLITestResult): void => {
   expect(result.exitCode).not.toBe(0);
 };
 
-export const expectOutputContains = (result: CLITestResult, text: string): void => {
+export const expectOutputContains = (
+  result: CLITestResult,
+  text: string,
+): void => {
   expect(result.stdout).toContain(text);
 };
 
-export const expectErrorContains = (result: CLITestResult, text: string): void => {
+export const expectErrorContains = (
+  result: CLITestResult,
+  text: string,
+): void => {
   expect(result.stderr).toContain(text);
 };

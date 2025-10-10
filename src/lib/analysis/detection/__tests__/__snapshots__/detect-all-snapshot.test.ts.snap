@@ -1,0 +1,448 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Detection - All Detectors Snapshot Tests detectFunctions: all cases 1`] = `
+"
+=== arrowFunction ===
+Count: 1
+FUNCTION | unusedFunction | file.ts:1:7
+
+=== arrowFunctionWithParams ===
+Count: 1
+FUNCTION | multiply | file.ts:1:7
+
+=== asyncFunction ===
+Count: 1
+FUNCTION | fetchData | file.ts:1:16
+
+=== classicFunction ===
+Count: 1
+FUNCTION | divide | file.ts:1:10
+
+=== deprecatedArrowFunction ===
+Count: 1
+FUNCTION | legacyHandler | file.ts:2:7
+
+=== deprecatedFunction ===
+Count: 1
+FUNCTION | oldFunction | file.ts:4:10
+
+=== exportedArrowFunction ===
+(aucune déclaration détectée)
+
+=== exportedFunction ===
+(aucune déclaration détectée)
+
+=== functionInComment ===
+(aucune déclaration détectée)
+
+=== functionInString ===
+(aucune déclaration détectée)
+
+=== functionWithDollarSign ===
+Count: 1
+FUNCTION | $jqueryFunction | file.ts:1:7
+
+=== functionWithUnderscore ===
+Count: 1
+FUNCTION | _privateFunction | file.ts:1:10
+
+=== multipleFunctions ===
+Count: 3
+FUNCTION | first | file.ts:1:10
+FUNCTION | second | file.ts:3:7
+FUNCTION | third | file.ts:5:10"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectClasses: all cases 1`] = `
+"
+=== abstractClass ===
+Count: 1
+CLASS | AbstractClass | file.ts:1:16
+
+=== basicClass ===
+Count: 1
+CLASS | MyClass | file.ts:1:7
+
+=== classInComment ===
+(aucune déclaration détectée)
+
+=== classInString ===
+(aucune déclaration détectée)
+
+=== classWithExtends ===
+Count: 1
+CLASS | ChildClass | file.ts:1:7
+
+=== classWithImplements ===
+Count: 1
+CLASS | MyClass | file.ts:1:7
+
+=== classWithMultipleImplements ===
+Count: 1
+CLASS | MyClass | file.ts:1:7
+
+=== defaultExportedClass ===
+(aucune déclaration détectée)
+
+=== deprecatedClass ===
+Count: 1
+CLASS | OldClass | file.ts:4:7
+
+=== exportedClass ===
+(aucune déclaration détectée)
+
+=== genericClass ===
+Count: 1
+CLASS | GenericClass | file.ts:1:7
+
+=== reactComponentClass ===
+Count: 1
+CLASS | MyComponent | file.ts:1:7"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectConstants: all cases 1`] = `
+"
+=== arrayDestructured ===
+Count: 1
+CONSTANT | first | file.ts:1:8
+
+=== constDeclaration ===
+Count: 1
+CONSTANT | myConstant | file.ts:1:7
+
+=== constInComment ===
+(aucune déclaration détectée)
+
+=== constWithDollarSign ===
+Count: 1
+CONSTANT | $jqueryStyle | file.ts:1:7
+
+=== constWithUnderscore ===
+Count: 1
+CONSTANT | _privateConstant | file.ts:1:7
+
+=== deprecatedConstant ===
+Count: 1
+CONSTANT | OLD_CONSTANT | file.ts:4:7
+
+=== destructured ===
+Count: 1
+CONSTANT | name | file.ts:1:9
+
+=== exportedConstant ===
+(aucune déclaration détectée)
+
+=== letDeclaration ===
+Count: 1
+CONSTANT | myVariable | file.ts:1:5
+
+=== multipleConstants ===
+Count: 4
+CONSTANT | first | file.ts:1:7
+CONSTANT | second | file.ts:2:7
+CONSTANT | third | file.ts:3:5
+CONSTANT | fourth | file.ts:4:5
+
+=== uppercaseConstant ===
+Count: 1
+CONSTANT | MAX_SIZE | file.ts:1:7
+
+=== varDeclaration ===
+Count: 1
+CONSTANT | oldStyleVar | file.ts:1:5"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectProps: all cases 1`] = `
+"
+=== deprecatedProp ===
+Count: 1
+PROP | oldValue | file.ts:2:7
+
+=== inlineProperty ===
+Count: 2
+PROP | name | file.ts:1:16
+PROP | age | file.ts:1:30
+
+=== multipleProp ===
+Count: 3
+PROP | host | file.ts:2:3
+PROP | port | file.ts:3:3
+PROP | ssl | file.ts:4:3
+
+=== objectLiteral ===
+Count: 2
+PROP | key | file.ts:2:3
+PROP | timeout | file.ts:3:3
+
+=== propInInterface ===
+Count: 2
+PROP | name | file.ts:2:3
+PROP | email | file.ts:3:3
+
+=== propInType ===
+Count: 2
+PROP | name | file.ts:2:3
+PROP | age | file.ts:3:3
+
+=== typedConstant ===
+Count: 1
+PROP | API_URL | file.ts:1:7"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectDefinitions: all cases 1`] = `
+"
+=== conditionalType ===
+Count: 1
+DEFINITION | IsString | file.ts:1:6
+
+=== deprecatedType ===
+Count: 1
+DEFINITION | OldType | file.ts:4:6
+
+=== exportedInterface ===
+Count: 1
+DEFINITION | IConfig | file.ts:1:18
+
+=== exportedType ===
+Count: 1
+DEFINITION | Status | file.ts:1:13
+
+=== genericInterface ===
+Count: 1
+DEFINITION | IResponse | file.ts:1:11
+
+=== genericType ===
+Count: 1
+DEFINITION | Result | file.ts:1:6
+
+=== interfaceDeclaration ===
+Count: 1
+DEFINITION | IUser | file.ts:1:11
+
+=== interfaceWithExtends ===
+Count: 1
+DEFINITION | IChild | file.ts:1:11
+
+=== mappedType ===
+Count: 1
+DEFINITION | Readonly | file.ts:1:6
+
+=== typeDeclaration ===
+Count: 1
+DEFINITION | MyType | file.ts:1:6
+
+=== typeInComment ===
+(aucune déclaration détectée)
+
+=== typeWithIntersection ===
+Count: 1
+DEFINITION | Combined | file.ts:1:6
+
+=== typeWithUnion ===
+Count: 1
+DEFINITION | Status | file.ts:1:6"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectExports: all cases 1`] = `
+"
+=== deprecatedExport ===
+Count: 1
+EXPORT | OLD_API | file.ts:2:14
+
+=== exportArrowFunction ===
+Count: 1
+EXPORT | handler | file.ts:1:14
+
+=== exportAsyncFunction ===
+Count: 1
+EXPORT | fetchData | file.ts:1:23
+
+=== exportClass ===
+Count: 1
+EXPORT | Service | file.ts:1:14
+
+=== exportConst ===
+Count: 1
+EXPORT | API_KEY | file.ts:1:14
+
+=== exportDefault ===
+Count: 1
+EXPORT | MyComponent | file.ts:1:16
+
+=== exportDefaultClass ===
+Count: 1
+EXPORT | class | file.ts:1:16
+
+=== exportDefaultFunction ===
+Count: 1
+EXPORT | function | file.ts:1:16
+
+=== exportDestructuring ===
+Count: 2
+EXPORT | a | file.ts:1:16
+EXPORT | b | file.ts:1:19
+
+=== exportFunction ===
+Count: 1
+EXPORT | calculate | file.ts:1:17
+
+=== exportInComment ===
+(aucune déclaration détectée)
+
+=== exportReactComponent ===
+Count: 1
+EXPORT | Button | file.ts:1:14
+
+=== exportWithAlias ===
+Count: 1
+EXPORT | myFunction | file.ts:1:10
+
+=== exportWithTypeAnnotation ===
+Count: 1
+EXPORT | value | file.ts:1:14
+
+=== multipleNamedExports ===
+Count: 3
+EXPORT | fn1 | file.ts:1:10
+EXPORT | fn2 | file.ts:1:15
+EXPORT | fn3 | file.ts:1:20
+
+=== namedExport ===
+Count: 1
+EXPORT | myFunction | file.ts:1:10"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectConsoles: all cases 1`] = `
+"
+=== consoleDebug ===
+Count: 1
+CONSOLE | console.debug | file.ts:1:1
+
+=== consoleError ===
+Count: 1
+CONSOLE | console.error | file.ts:1:1
+
+=== consoleInArrowFunction ===
+Count: 1
+CONSOLE | console.log | file.ts:1:19
+
+=== consoleInComment ===
+(aucune déclaration détectée)
+
+=== consoleInConditional ===
+Count: 1
+CONSOLE | console.log | file.ts:2:3
+
+=== consoleInString ===
+(aucune déclaration détectée)
+
+=== consoleInTryCatch ===
+Count: 1
+CONSOLE | console.error | file.ts:4:3
+
+=== consoleInfo ===
+Count: 1
+CONSOLE | console.info | file.ts:1:1
+
+=== consoleLog ===
+Count: 1
+CONSOLE | console.log | file.ts:1:1
+
+=== consoleWarn ===
+Count: 1
+CONSOLE | console.warn | file.ts:1:1
+
+=== consoleWithComplexArgs ===
+Count: 1
+CONSOLE | console.log | file.ts:1:1
+
+=== consoleWithMethodChaining ===
+Count: 1
+CONSOLE | console.log | file.ts:1:1
+
+=== multipleConsoleCalls ===
+Count: 3
+CONSOLE | console.log | file.ts:1:1
+CONSOLE | console.error | file.ts:2:1
+CONSOLE | console.warn | file.ts:3:1"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectDependencies: all cases 1`] = `
+"
+=== bothDependencies ===
+Count: 2
+DEPENDENCY | express | package.json:3:5
+DEPENDENCY | nodemon | package.json:4:5
+
+=== devDependencies ===
+Count: 2
+DEPENDENCY | typescript | package.json:3:5
+DEPENDENCY | vitest | package.json:4:5
+
+=== invalidJson ===
+(aucune dépendance détectée)
+
+=== manyDependencies ===
+Count: 5
+DEPENDENCY | dep1 | package.json:3:5
+DEPENDENCY | dep2 | package.json:4:5
+DEPENDENCY | dep3 | package.json:5:5
+DEPENDENCY | dep4 | package.json:6:5
+DEPENDENCY | dep5 | package.json:7:5
+
+=== noDependencies ===
+(aucune dépendance détectée)
+
+=== scopedPackages ===
+Count: 2
+DEPENDENCY | @angular/core | package.json:4:5
+DEPENDENCY | @types/node | package.json:3:5
+
+=== simpleDependencies ===
+Count: 2
+DEPENDENCY | axios | package.json:4:5
+DEPENDENCY | react | package.json:3:5"
+`;
+
+exports[`Detection - All Detectors Snapshot Tests detectDeprecated: all cases 1`] = `
+"
+=== deprecatedArrowFunction ===
+Count: 1
+FUNCTION | legacyHandler | file.ts:2:7
+
+=== deprecatedClass ===
+Count: 1
+CLASS | OldClass | file.ts:4:7
+
+=== deprecatedConstant ===
+Count: 1
+CONSTANT | OLD_VALUE | file.ts:2:7
+
+=== deprecatedExport ===
+Count: 1
+CONSTANT | OLD_API | file.ts:4:14
+
+=== deprecatedFunction ===
+Count: 1
+FUNCTION | oldFunction | file.ts:4:10
+
+=== deprecatedInterface ===
+Count: 1
+DEFINITION | IOldInterface | file.ts:4:11
+
+=== deprecatedProp ===
+Count: 1
+PROP | oldField | file.ts:3:3
+
+=== deprecatedType ===
+Count: 1
+DEFINITION | OldType | file.ts:2:6
+
+=== multipleDeprecated ===
+Count: 2
+CONSTANT | old1 | file.ts:2:7
+FUNCTION | old2 | file.ts:7:10
+
+=== nonDeprecated ===
+(aucune déclaration détectée)"
+`;

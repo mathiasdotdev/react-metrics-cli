@@ -1,30 +1,28 @@
-import { vi } from 'vitest';
+import { mock } from 'bun:test';
 
 export function mockLogger() {
   const loggerMock = {
-    setLevel: vi.fn(),
-    newLine: vi.fn(),
-    debug: vi.fn(),
-    log: vi.fn(),
-    info: vi.fn(),
-    success: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-    credentials: vi.fn(),
-    download: vi.fn(),
-    config: vi.fn(),
-    files: vi.fn(),
-    cleanup: vi.fn(),
-    settings: vi.fn(),
-    analysis: vi.fn(),
-    examples: vi.fn(),
-    report: vi.fn(),
-    list: vi.fn(),
-    colored: vi.fn(),
+    setLevel: mock(),
+    newLine: mock(),
+    debug: mock(),
+    log: mock(),
+    info: mock(),
+    success: mock(),
+    warn: mock(),
+    error: mock(),
+    config: mock(),
+    files: mock(),
+    cleanup: mock(),
+    settings: mock(),
+    analysis: mock(),
+    examples: mock(),
+    report: mock(),
+    list: mock(),
+    colored: mock(),
   };
 
   // Mock du module Logger (maintenant basé sur Pino)
-  vi.doMock('../../ui/logger/Logger', () => ({
+  mock.module('$/ui/logger/Logger', () => ({
     Logger: loggerMock,
     LogLevel: {
       DEBUG: 0,
@@ -34,10 +32,10 @@ export function mockLogger() {
       ERROR: 4,
     },
     logger: {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
       level: 'debug',
     },
   }));
@@ -46,5 +44,5 @@ export function mockLogger() {
 }
 
 export function restoreLogger() {
-  vi.doUnmock('../../ui/logger/Logger');
+  mock.restore();
 }

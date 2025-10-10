@@ -1,0 +1,211 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Verification - All Verifiers Snapshot Tests verifyFunctions: all cases 1`] = `
+"
+=== functionAsCallback ===
+FUNCTION | handleClick | used: true
+
+=== functionCalled ===
+FUNCTION | myFunction | used: true
+
+=== functionInComment ===
+FUNCTION | myFunction | used: false
+
+=== functionInJSX ===
+FUNCTION | handleSubmit | used: true
+
+=== functionInString ===
+FUNCTION | myFunction | used: false"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyClasses: all cases 1`] = `
+"
+=== classAsFirstParameter ===
+CLASS | MyClass | used: false
+
+=== classAsLastParameter ===
+CLASS | MyClass | used: false
+
+=== classAsParameter ===
+CLASS | MyClass | used: false
+
+=== classAsType ===
+CLASS | MyClass | used: true
+
+=== classExtended ===
+CLASS | BaseClass | used: true
+
+=== classInComment ===
+CLASS | MyClass | used: false
+
+=== classInExportBraces ===
+CLASS | MyClass | used: false
+
+=== classInGenericWithComma ===
+CLASS | MyClass | used: false
+
+=== classInInstanceof ===
+CLASS | MyClass | used: true
+
+=== classInString ===
+CLASS | MyClass | used: false
+
+=== classInstantiated ===
+CLASS | MyClass | used: true
+
+=== classStaticAccess ===
+CLASS | MyClass | used: false
+
+=== classWithImplementsComma ===
+CLASS | MyClass | used: false"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyConstants: all cases 1`] = `
+"
+=== constantInExpression ===
+CONSTANT | MAX_COUNT | used: true
+
+=== constantInSpread ===
+CONSTANT | BASE_PROPS | used: true
+
+=== constantInTemplateInterpolation ===
+CONSTANT | USERNAME | used: true
+
+=== constantReferenced ===
+CONSTANT | API_URL | used: true"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyProps: all cases 1`] = `
+"
+=== propAccessed ===
+PROP | name | used: true
+
+=== propInDestructuring ===
+PROP | email | used: true
+
+=== propInSpread ===
+PROP | title | used: true"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyDefinitions: all cases 1`] = `
+"
+=== definitionInComment ===
+DEFINITION | UserType | used: false
+
+=== definitionInExport ===
+DEFINITION | UserType | used: false
+
+=== definitionInIntersection ===
+DEFINITION | UserType | used: false
+
+=== definitionInString ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInAs ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInExtends ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInImplements ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInIntersection ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInIs ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInKeyof ===
+DEFINITION | UserType | used: false
+
+=== definitionNotInTypeof ===
+DEFINITION | UserType | used: false
+
+=== interfaceImplemented ===
+DEFINITION | IService | used: true
+
+=== typeInGeneric ===
+DEFINITION | Result | used: true
+
+=== typeInUnion ===
+DEFINITION | Status | used: true
+
+=== typeUsedInAnnotation ===
+DEFINITION | User | used: true"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyExports: all cases 1`] = `
+"
+=== exportImportedInAnotherFile ===
+EXPORT | myFunction | used: true
+
+=== exportReExported ===
+EXPORT | myFunction | used: true
+
+=== exportWithMultipleImports ===
+EXPORT | myExport | used: true
+
+=== importWithComplexRelativePath ===
+EXPORT | util | used: true
+
+=== importWithRelativeParentPath ===
+EXPORT | helper | used: true
+
+=== importWithoutFrom ===
+EXPORT | myExport | used: false"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyConsoles: all cases 1`] = `
+"
+=== consoleError ===
+CONSOLE | console | used: false
+
+=== consoleLog ===
+CONSOLE | console | used: false
+
+=== consoleWarn ===
+CONSOLE | console | used: false"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyDependencies: all cases 1`] = `
+"
+=== dependencyImported ===
+DEPENDENCY | react | used: true
+
+=== dependencyRequired ===
+DEPENDENCY | express | used: true
+
+=== dependencyScopedImport ===
+DEPENDENCY | @types/node | used: true
+
+=== dependencySubmodule ===
+DEPENDENCY | fs | used: true
+
+=== dynamicImport ===
+DEPENDENCY | chalk | used: true
+
+=== reExportFromPackage ===
+DEPENDENCY | react | used: true
+
+=== reExportWithSubmodule ===
+DEPENDENCY | lodash | used: true
+
+=== requireWithSubmodule ===
+DEPENDENCY | fs | used: false
+
+=== sideEffectImportSingleQuote ===
+DEPENDENCY | dotenv | used: true
+
+=== sideEffectImportWithSubmodule ===
+DEPENDENCY | react | used: true"
+`;
+
+exports[`Verification - All Verifiers Snapshot Tests verifyDeprecated: all cases 1`] = `
+"
+=== deprecatedDeclaration ===
+FUNCTION | oldFunction | used: false
+
+=== nonDeprecatedDeclaration ===
+FUNCTION | newFunction | used: false"
+`;

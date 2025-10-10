@@ -1,0 +1,45 @@
+# Configuration Bun pour React-Metrics CLI
+
+[test]
+# 🧪 Test runner configuration
+coverage = true
+coverageReporter = ["text", "lcov"]
+coverageDir = "output/coverage"
+
+# Coverage thresholds (SonarQube quality gates)
+coverageThreshold = { lines = 0.70, functions = 0.70, statements = 0.70 }
+
+# Exclude test files from coverage
+coverageSkipTestFiles = false
+
+# Ignore patterns for coverage
+coveragePathIgnorePatterns = [
+  "**/__tests__/**",
+  "**/*.test.ts",
+  "**/*.d.ts",
+  "node_modules/**",
+  "dist/**"
+]
+
+# Test timeout (30 secondes)
+timeout = 30000
+
+# bunfig.toml
+[resolve.alias]
+# principaux alias
+"$/" = "./**/*"
+"$lib/" = "./src/lib/*"
+"$analysis/" = "./src/lib/analysis/*"
+"$config/" = "./src/lib/config/*"
+"$reporter/" = "./src/lib/reporter/*"
+"$types/" = "./src/lib/types/*"
+"$ui/" = "./src/lib/ui/*"
+"$react-demo/" = "./src/react-demo/*"
+"$tests/" = "./src/__tests__/*"
+
+# sous-alias pour l'analyse
+"@annotation/" = "./src/lib/analysis/annotation/*"
+"@core/*" = "./src/lib/analysis/core/*"
+"@detection/" = "./src/lib/analysis/detection/*"
+"@utils/" = "./src/lib/analysis/utils/*"
+"@verification/" = "./src/lib/analysis/verification/*"

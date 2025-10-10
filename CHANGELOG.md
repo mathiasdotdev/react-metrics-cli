@@ -2,6 +2,64 @@
 
 ## [Non publiée]
 
+## [0.20.0] - 10/10/2025
+
+### Added
+
+- **Système d'analyse TypeScript natif** : Implémentation complète des modules detection, verification et annotation
+- **Migration vers Bun** : Intégration du runtime Bun avec bunfig.toml et lockfile natif
+- **Tests snapshot** : Suite complète de tests avec snapshots pour analyse, config, logger, reporter
+- **Projet react-demo complet** : Nouveau projet de démonstration avec exemples d'usage exhaustifs
+- **ESLint natif** : Configuration moderne avec eslint.config.ts
+- **Pre-commit hooks** : Intégration Husky pour validation automatique
+
+### Changed
+
+- **Architecture modulaire** : Refonte complète vers src/lib/ avec séparation analysis/config/parser/reporter/ui
+- **Système de types** : Types centralisés dans src/lib/types/
+
+### Technical
+
+- **Tests snapshot** : Helpers de test et validation automatique des résultats
+- **Structure react-demo** : Exemples pour props, annotations, classes, deprecated features
+
+## [0.19.0] - 04/10/2025
+
+### Removed
+
+- **Commande `upload`** : Suppression de l'upload vers Nexus (fonctionnalité obsolète depuis migration TypeScript natif)
+- **Commande `download`** : Suppression du téléchargement de binaires depuis Nexus (plus nécessaire avec tsgo)
+- **Commande `coverage`** : Suppression de l'analyse de couverture (spécifique aux tests Go, non applicable)
+- **Authentification Nexus** : Suppression du système de credentials et TokenManager (plus utilisé)
+- **Dépendances binaires Go** : Le projet utilise maintenant exclusivement TypeScript avec tsgo
+
+### Changed
+
+- **Documentation** : Mise à jour README pour refléter uniquement les commandes `analyze` et `config`
+- **Emplacement configuration** : Simplification de `~/.nexus-utils/` vers `~/.react-metrics/`
+- **Architecture** : Focus sur l'analyse TypeScript native sans dépendances externes
+
+### Technical
+
+- **Nettoyage codebase** : Suppression des références obsolètes à Nexus, binaires Go, et credentials
+- **Structure simplifiée** : Architecture centrée sur `src/lib/` avec modules analysis, config, logger, parser, reporter
+
+## [0.18.0] - 29/09/2025
+
+### Added
+
+- **Compilateur TypeScript natif** : Migration vers tsgo (TypeScript v7/Corsa) écrit en Go pour performance x10
+- **Package @typescript/native-preview** : Intégration du compilateur preview pour compilation ultra-rapide
+
+### Changed
+
+- **Scripts de build** : Remplacement de `tsc` par `tsgo` dans tous les scripts npm
+- **Performance de build** : Amélioration significative des temps de compilation (jusqu'à 10x plus rapide)
+
+### Technical
+
+- **Maintien compatibilité** : TypeScript 5.9.2 conservé pour outils comme `tsc --init` et ts-node
+
 ## [0.17.0] - 29/09/2025
 
 ### Added

@@ -1,4 +1,4 @@
-import { vi } from 'vitest';
+import { mock } from 'bun:test';
 
 // Configuration globale des tests
 export const TEST_TIMEOUT = 30000;
@@ -19,9 +19,9 @@ export const mockConsole = () => {
   const originalError = console.error;
   const originalWarn = console.warn;
 
-  const mockLog = vi.fn();
-  const mockError = vi.fn();
-  const mockWarn = vi.fn();
+  const mockLog = mock();
+  const mockError = mock();
+  const mockWarn = mock();
 
   console.log = mockLog;
   console.error = mockError;
@@ -42,23 +42,22 @@ export const mockConsole = () => {
 // Mock du Logger pour les tests
 export const mockLogger = () => {
   const mockMethods = {
-    info: vi.fn(),
-    success: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-    config: vi.fn(),
-    cleanup: vi.fn(),
-    credentials: vi.fn(),
-    colored: vi.fn(),
-    analysis: vi.fn(),
-    separator: vi.fn(),
-    start: vi.fn(),
-    stop: vi.fn(),
+    info: mock(),
+    success: mock(),
+    error: mock(),
+    warn: mock(),
+    debug: mock(),
+    config: mock(),
+    cleanup: mock(),
+    colored: mock(),
+    analysis: mock(),
+    separator: mock(),
+    start: mock(),
+    stop: mock(),
   };
 
   // Mock le module Logger
-  vi.doMock('../../ui/logger/Logger', () => ({
+  mock.module('$/ui/logger/Logger', () => ({
     Logger: mockMethods,
   }));
 
@@ -68,7 +67,7 @@ export const mockLogger = () => {
 // Mock du process.exit pour les tests
 export const mockProcessExit = () => {
   const originalExit = process.exit;
-  const mockExit = vi.fn<never>();
+  const mockExit = mock<never>();
   process.exit = mockExit as never;
 
   return {
@@ -105,8 +104,8 @@ export const mockFileSystem = () => {
   const originalExistsSync = fs.existsSync;
   const originalReadFileSync = fs.readFileSync;
 
-  const mockExistsSync = vi.fn();
-  const mockReadFileSync = vi.fn();
+  const mockExistsSync = mock();
+  const mockReadFileSync = mock();
 
   fs.existsSync = mockExistsSync;
   fs.readFileSync = mockReadFileSync;

@@ -1,33 +1,58 @@
 {
   "compilerOptions": {
-    // 🎯 ciblage et compatibilité
-    "target": "ES2022",
-    "lib": ["ES2022"],
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "types": ["node"],
+    // ⚙️ Compatibilité Bun/ESM
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": false,
+    "noEmit": true,
 
-    // 📦 structure du projet
+    // 🎯 Ciblage (ESM moderne avec Bun)
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "types": ["node", "bun-types"],
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+
+    // 📦 Structure du projet
     "rootDir": "./src",
     "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      // principaux alias
+      "$/*": ["./*"],
+      "$lib/*": ["./src/lib/*"],
+      "$analysis/*": ["./src/lib/analysis/*"],
+      "$config/*": ["./src/lib/config/*"],
+      "$reporter/*": ["./src/lib/reporter/*"],
+      "$types/*": ["./src/lib/types/*"],
+      "$ui/*": ["./src/lib/ui/*"],
+      "$react-demo/*": ["./src/react-demo/*"],
+      "$tests/*": ["./src/__tests__/*"],
 
-    // 🔒 sécurité et qualité
+      // sous-alias pour l'analyse
+      "@annotation/*": ["./src/lib/analysis/annotation/*"],
+      "@core/*": ["./src/lib/analysis/core/*"],
+      "@detection/*": ["./src/lib/analysis/detection/*"],
+      "@utils/*": ["./src/lib/analysis/utils/*"],
+      "@verification/*": ["./src/lib/analysis/verification/*"]
+    },
+
+    // 🔒 Sécurité et Qualité
     "strict": true,
-    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmitOnError": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
 
-    // 🔄 interopérabilité et compatibilité modules
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
+    // 🛠️ Confort de développement
     "skipLibCheck": true,
-
-    // 📝 génération de fichiers utiles
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "sourceMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist"]
 }

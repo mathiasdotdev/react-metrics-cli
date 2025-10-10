@@ -1,0 +1,263 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`CLI Analyze Command - Snapshot Test la commande analyze produit la sortie attendue sur react-demo 1`] = `
+"=== Classes ===
+File: react-demo/src/components/ClassExample.tsx:11:7
+    Name: UnusedClass
+File: react-demo/src/features/cas1.ts:32:7
+    Name: UnusedClass
+File: react-demo/src/features/cas2.ts:25:7
+    Name: UnusedClass
+File: react-demo/src/features/DeprecatedFeatures.ts:16:14
+    Name: OldClass
+
+
+=== Console Logs ===
+File: react-demo/App.tsx:8:24
+    Type: console.log
+File: react-demo/src/components/Button.tsx:32:3
+    Type: console.warn
+File: react-demo/src/features/annotations.tsx:10:3
+    Type: console.log
+File: react-demo/src/features/annotations.tsx:5:3
+    Type: console.log
+File: react-demo/src/features/cas1.ts:34:5
+    Type: console.log
+File: react-demo/src/features/cas1.ts:41:5
+    Type: console.log
+File: react-demo/src/features/cas1.ts:49:1
+    Type: console.debug
+File: react-demo/src/features/cas1.ts:51:1
+    Type: console.log
+File: react-demo/src/features/cas1.ts:52:1
+    Type: console.info
+File: react-demo/src/features/cas2.ts:27:5
+    Type: console.error
+File: react-demo/src/features/cas2.ts:34:5
+    Type: console.log
+File: react-demo/src/features/cas2.ts:39:1
+    Type: console.log
+File: react-demo/src/features/ignore-file-late-comment.jsx:7:3
+    Type: console.log
+
+
+=== Constantes ===
+File: react-demo/src/components/Button.tsx:13:9
+    Name: blabla2
+File: react-demo/src/features/annotations.tsx:24:7
+    Name: normalConstant
+File: react-demo/src/features/cas1.ts:11:7
+    Name: toto
+File: react-demo/src/features/DeprecatedFeatures.ts:25:14
+    Name: OLD_CONSTANT
+File: react-demo/src/features/ignore-file-late-comment.jsx:13:7
+    Name: thisVariableWillAlsoBeDetected
+File: react-demo/src/features/ignore-file-late-comment.jsx:3:7
+    Name: thisVariableWillBeDetected
+
+
+=== Déclarations @deprecated ===
+File: react-demo/src/features/DeprecatedFeatures.ts:16:14
+    Type: CLASS
+    Name: OldClass
+File: react-demo/src/features/DeprecatedFeatures.ts:25:14
+    Type: CONSTANT
+    Name: OLD_CONSTANT
+File: react-demo/src/features/DeprecatedFeatures.ts:30:18
+    Type: DEFINITION
+    Name: OldInterface
+File: react-demo/src/features/DeprecatedFeatures.ts:37:13
+    Type: DEFINITION
+    Name: OldType
+File: react-demo/src/features/DeprecatedFeatures.ts:42:14
+    Type: FUNCTION
+    Name: oldArrowFunction
+File: react-demo/src/features/DeprecatedFeatures.ts:49:18
+    Type: DEFINITION
+    Name: DeprecatedProps
+File: react-demo/src/features/DeprecatedFeatures.ts:51:3
+    Type: PROP
+    Name: oldProp
+File: react-demo/src/features/DeprecatedFeatures.ts:9:17
+    Type: FUNCTION
+    Name: oldFunction
+Suggestion: Considérer la suppression ou le remplacement
+
+
+=== Dependencies ===
+File: react-demo/package.json:10:5
+    Name: @types/react-router-dom
+File: react-demo/package.json:12:5
+    Name: react-dom
+File: react-demo/package.json:16:5
+    Name: @types/react
+File: react-demo/package.json:17:5
+    Name: @types/react-dom
+File: react-demo/package.json:18:5
+    Name: typescript
+
+
+=== Exports ===
+File: react-demo/App.tsx:3:14
+    Name: App
+File: react-demo/src/components/Button.tsx:26:14
+    Name: ButtonSimplified
+File: react-demo/src/components/Button.tsx:36:14
+    Name: UnusedButton
+File: react-demo/src/components/ClassExample.tsx:4:14
+    Name: ClassExample
+File: react-demo/src/config/constants.ts:1:14
+    Name: ROUTE_DEFAULT
+File: react-demo/src/config/constants.ts:2:14
+    Name: ROUTE_LOGIN
+File: react-demo/src/config/constants.ts:3:14
+    Name: ROUTE_SIGNUP
+File: react-demo/src/config/constants.ts:4:14
+    Name: ROUTE_DASHBOARD
+File: react-demo/src/config/constants.ts:5:14
+    Name: ROUTE_ALL
+File: react-demo/src/features/advanced-props.tsx:101:14
+    Name: MemoizedButton
+File: react-demo/src/features/advanced-props.tsx:106:14
+    Name: ForwardRefButton
+File: react-demo/src/features/advanced-props.tsx:14:14
+    Name: BasicButton
+File: react-demo/src/features/advanced-props.tsx:19:14
+    Name: RenamedButton
+File: react-demo/src/features/advanced-props.tsx:25:14
+    Name: DefaultButton
+File: react-demo/src/features/advanced-props.tsx:37:14
+    Name: SpreadButton
+File: react-demo/src/features/advanced-props.tsx:48:14
+    Name: ComplexButton
+File: react-demo/src/features/advanced-props.tsx:66:14
+    Name: MultiLineButton
+File: react-demo/src/features/advanced-props.tsx:94:14
+    Name: withAuth
+File: react-demo/src/features/advanced-props.tsx:98:14
+    Name: AuthenticatedButton
+File: react-demo/src/features/cas1.ts:39:14
+    Name: UnusedExportedClass
+File: react-demo/src/features/cas1.ts:5:14
+    Name: goodbye
+File: react-demo/src/features/cas2.ts:15:17
+    Name: Subtract2Numbers
+File: react-demo/src/features/cas2.ts:32:14
+    Name: UnusedExportedClass
+File: react-demo/src/features/DeprecatedFeatures.ts:58:17
+    Name: newFunction
+File: react-demo/src/features/DeprecatedFeatures.ts:65:14
+    Name: NewClass
+File: react-demo/src/features/DeprecatedFeatures.ts:71:14
+    Name: NEW_CONSTANT
+File: react-demo/src/routes/routing.tsx:16:14
+    Name: router
+
+
+=== Exports Local-Only ===
+File: react-demo/src/config/fetch.ts:1:14
+    Name: DEFAULT_TIMEOUT
+File: react-demo/src/features/advanced-props.tsx:126:10
+    Name: FunctionButton
+File: react-demo/src/features/annotations.tsx:45:10
+    Name: normalConstant
+File: react-demo/src/features/annotations.tsx:45:26
+    Name: normalFunction
+File: react-demo/src/features/cas1.ts:14:17
+    Name: add
+File: react-demo/src/features/cas1.ts:17:14
+    Name: multiply
+File: react-demo/src/features/cas1.ts:2:14
+    Name: helloWorld
+Suggestion: Supprimer le mot-clé "export"
+
+
+=== Fonctions ===
+File: react-demo/src/components/Button.tsx:31:7
+    Name: unusedFunction
+File: react-demo/src/config/fetch.ts:7:16
+    Name: appFetch
+File: react-demo/src/features/advanced-props.tsx:84:10
+    Name: FunctionButton
+File: react-demo/src/features/annotations.tsx:19:10
+    Name: specificIgnoredFunction
+File: react-demo/src/features/annotations.tsx:34:10
+    Name: temporaryFunction
+File: react-demo/src/features/cas1.ts:27:10
+    Name: divide
+File: react-demo/src/features/cas2.ts:20:10
+    Name: Divide2Numbers
+File: react-demo/src/features/DeprecatedFeatures.ts:42:14
+    Name: oldArrowFunction
+File: react-demo/src/features/DeprecatedFeatures.ts:9:17
+    Name: oldFunction
+File: react-demo/src/features/ignore-file-late-comment.jsx:6:10
+    Name: thisWillAlsoBeDetected
+File: react-demo/src/types/TestDefinitions.ts:72:10
+    Name: processUser
+
+
+=== Props ===
+File: react-demo/src/config/fetch.ts:13:51
+    Name: signal
+File: react-demo/src/features/DeprecatedFeatures.ts:52:3
+    Name: newProp
+File: react-demo/src/routes/routing.tsx:20:5
+    Name: errorElement
+File: react-demo/src/types/TestDefinitions.ts:12:3
+    Name: active
+File: react-demo/src/types/TestDefinitions.ts:22:3
+    Name: unused
+File: react-demo/src/types/TestDefinitions.ts:33:3
+    Name: data
+File: react-demo/src/types/TestDefinitions.ts:34:3
+    Name: total
+File: react-demo/src/types/TestDefinitions.ts:44:3
+    Name: metadata
+File: react-demo/src/types/TestDefinitions.ts:50:7
+    Name: user
+File: react-demo/src/types/TestDefinitions.ts:56:7
+    Name: counter
+File: react-demo/src/types/TestDefinitions.ts:67:7
+    Name: appStatus
+File: react-demo/src/types/TestDefinitions.ts:80:7
+    Name: users
+File: react-demo/src/types/TestDefinitions.ts:81:7
+    Name: promise
+
+
+=== Types/Interfaces ===
+File: react-demo/src/features/DeprecatedFeatures.ts:30:18
+    Name: OldInterface
+File: react-demo/src/features/DeprecatedFeatures.ts:37:13
+    Name: OldType
+File: react-demo/src/features/DeprecatedFeatures.ts:49:18
+    Name: DeprecatedProps
+File: react-demo/src/types/TestDefinitions.ts:10:13
+    Name: UnusedExportedType
+File: react-demo/src/types/TestDefinitions.ts:21:6
+    Name: UnusedNotExportedType
+File: react-demo/src/types/TestDefinitions.ts:32:18
+    Name: UnusedExportedInterface
+File: react-demo/src/types/TestDefinitions.ts:43:11
+    Name: UnusedNotExportedInterface
+File: react-demo/src/types/TestDefinitions.ts:84:6
+    Name: CombinedStatus
+
+
+📊 Code mort détecté:
+- Functions: 11
+- Classes: 4
+- Constants: 6
+- Props: 13
+- Consoles: 13
+- Types/Interfaces: 8
+- Exports: 27
+- Dependency: 5
+
+
+Total: 87 éléments
+⚠️  Déclarations @deprecated: 8 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;

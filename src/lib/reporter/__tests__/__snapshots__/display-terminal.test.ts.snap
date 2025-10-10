@@ -1,0 +1,322 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`displayAnalysisResults should display empty results 1`] = `
+"📊 Code mort détecté:
+
+
+Total: 0 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display functions only 1`] = `
+"=== Fonctions ===
+File: /test/file.ts:10:5
+    Name: unusedFunction
+File: /test/other.ts:20:3
+    Name: anotherUnused
+
+
+📊 Code mort détecté:
+- Functions: 2
+
+
+Total: 2 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display classes only 1`] = `
+"=== Classes ===
+File: /test/class.ts:15:7
+    Name: UnusedClass
+File: /test/legacy.ts:30:7
+    Name: OldClass
+
+
+📊 Code mort détecté:
+- Classes: 2
+
+
+Total: 2 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display constants and props 1`] = `
+"=== Constantes ===
+File: /test/const.ts:5:7
+    Name: UNUSED_CONST
+
+
+=== Props ===
+File: /test/props.tsx:8:3
+    Name: unusedProp
+
+
+📊 Code mort détecté:
+- Constants: 1
+- Props: 1
+
+
+Total: 2 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display console logs 1`] = `
+"=== Console Logs ===
+File: /test/console.ts:12:3
+    Type: console.log
+File: /test/console.ts:15:3
+    Type: console.error
+
+
+📊 Code mort détecté:
+- Consoles: 2
+
+
+Total: 2 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display all categories mixed 1`] = `
+"=== Fonctions ===
+File: /f.ts:1:1
+    Name: fn
+File: /f.ts:2:1
+    Name: fn2
+
+
+=== Classes ===
+File: /c.ts:1:1
+    Name: cls
+
+
+=== Constantes ===
+File: /c.ts:1:1
+    Name: const1
+File: /c.ts:2:1
+    Name: const2
+File: /c.ts:3:1
+    Name: const3
+
+
+=== Props ===
+File: /p.ts:1:1
+    Name: prop
+
+
+=== Console Logs ===
+File: /c.ts:1:1
+    Type: console.log
+
+
+=== Types/Interfaces ===
+File: /t.ts:1:1
+    Name: Type1
+
+
+=== Exports ===
+File: /e.ts:1:1
+    Name: Export1
+
+
+=== Dependencies ===
+File: /p.json:1:1
+    Name: dep
+
+
+📊 Code mort détecté:
+- Functions: 2
+- Classes: 1
+- Constants: 3
+- Props: 1
+- Consoles: 1
+- Types/Interfaces: 1
+- Exports: 1
+- Dependency: 1
+
+
+Total: 11 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;
+
+exports[`displayAnalysisResults should display real-world scenario with many elements 1`] = `
+"=== Fonctions ===
+File: /f.ts:1:1
+    Name: function0
+File: /f.ts:2:1
+    Name: function1
+File: /f.ts:3:1
+    Name: function2
+File: /f.ts:4:1
+    Name: function3
+File: /f.ts:5:1
+    Name: function4
+File: /f.ts:6:1
+    Name: function5
+File: /f.ts:7:1
+    Name: function6
+File: /f.ts:8:1
+    Name: function7
+File: /f.ts:9:1
+    Name: function8
+File: /f.ts:10:1
+    Name: function9
+
+
+=== Classes ===
+File: /c.ts:1:1
+    Name: Class0
+File: /c.ts:2:1
+    Name: Class1
+File: /c.ts:3:1
+    Name: Class2
+
+
+=== Constantes ===
+File: /c.ts:1:1
+    Name: const0
+File: /c.ts:2:1
+    Name: const1
+File: /c.ts:3:1
+    Name: const2
+File: /c.ts:4:1
+    Name: const3
+File: /c.ts:5:1
+    Name: const4
+File: /c.ts:6:1
+    Name: const5
+File: /c.ts:7:1
+    Name: const6
+File: /c.ts:8:1
+    Name: const7
+File: /c.ts:9:1
+    Name: const8
+File: /c.ts:10:1
+    Name: const9
+File: /c.ts:11:1
+    Name: const10
+File: /c.ts:12:1
+    Name: const11
+
+
+=== Props ===
+File: /p.ts:1:1
+    Name: prop0
+File: /p.ts:2:1
+    Name: prop1
+File: /p.ts:3:1
+    Name: prop2
+File: /p.ts:4:1
+    Name: prop3
+File: /p.ts:5:1
+    Name: prop4
+File: /p.ts:6:1
+    Name: prop5
+
+
+=== Console Logs ===
+File: /c.ts:1:1
+    Type: console.log
+File: /c.ts:2:1
+    Type: console.log
+File: /c.ts:3:1
+    Type: console.log
+File: /c.ts:4:1
+    Type: console.log
+File: /c.ts:5:1
+    Type: console.log
+File: /c.ts:6:1
+    Type: console.log
+File: /c.ts:7:1
+    Type: console.log
+File: /c.ts:8:1
+    Type: console.log
+File: /c.ts:9:1
+    Type: console.log
+File: /c.ts:10:1
+    Type: console.log
+File: /c.ts:11:1
+    Type: console.log
+File: /c.ts:12:1
+    Type: console.log
+File: /c.ts:13:1
+    Type: console.log
+
+
+=== Types/Interfaces ===
+File: /t.ts:1:1
+    Name: Type0
+File: /t.ts:2:1
+    Name: Type1
+File: /t.ts:3:1
+    Name: Type2
+File: /t.ts:4:1
+    Name: Type3
+File: /t.ts:5:1
+    Name: Type4
+
+
+=== Exports ===
+File: /e.ts:1:1
+    Name: Export0
+File: /e.ts:2:1
+    Name: Export1
+File: /e.ts:3:1
+    Name: Export2
+File: /e.ts:4:1
+    Name: Export3
+File: /e.ts:5:1
+    Name: Export4
+File: /e.ts:6:1
+    Name: Export5
+File: /e.ts:7:1
+    Name: Export6
+File: /e.ts:8:1
+    Name: Export7
+File: /e.ts:9:1
+    Name: Export8
+File: /e.ts:10:1
+    Name: Export9
+File: /e.ts:11:1
+    Name: Export10
+File: /e.ts:12:1
+    Name: Export11
+File: /e.ts:13:1
+    Name: Export12
+File: /e.ts:14:1
+    Name: Export13
+File: /e.ts:15:1
+    Name: Export14
+File: /e.ts:16:1
+    Name: Export15
+File: /e.ts:17:1
+    Name: Export16
+File: /e.ts:18:1
+    Name: Export17
+
+
+=== Dependencies ===
+File: /package.json:12:5
+    Name: react-dom
+
+
+📊 Code mort détecté:
+- Functions: 10
+- Classes: 3
+- Constants: 12
+- Props: 6
+- Consoles: 13
+- Types/Interfaces: 5
+- Exports: 18
+- Dependency: 1
+
+
+Total: 68 éléments
+⏱️  Durée totale de l'analyse: X.XX secondes
+✅ Analyse terminée"
+`;

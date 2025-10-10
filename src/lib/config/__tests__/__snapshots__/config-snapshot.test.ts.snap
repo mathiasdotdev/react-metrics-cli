@@ -1,0 +1,98 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Config Functions - Snapshot Tests getConfigPath: should return config file path 1`] = `"<HOME>/.react-metrics-cli/config.json"`;
+
+exports[`Config Functions - Snapshot Tests configExists: should return false when config does not exist 1`] = `
+{
+  "exists": false,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests configExists: should return true when config exists 1`] = `
+{
+  "exists": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests loadConfig: should return default config when file does not exist 1`] = `
+{
+  "hasConfig": false,
+  "keys": [
+    "analysis",
+    "fileExtensions",
+    "ignoreAnnotations",
+    "ignoredFolders",
+    "maxGoroutines",
+    "modeDebug",
+    "otherIgnoredFolders",
+    "reports",
+  ],
+}
+`;
+
+exports[`Config Functions - Snapshot Tests loadConfig: should load config from file when it exists 1`] = `
+{
+  "hasConfig": true,
+  "keys": [
+    "analysis",
+    "fileExtensions",
+    "ignoreAnnotations",
+    "ignoredFolders",
+    "maxGoroutines",
+    "modeDebug",
+    "otherIgnoredFolders",
+    "reports",
+  ],
+}
+`;
+
+exports[`Config Functions - Snapshot Tests loadConfig: should merge with defaults when config is partial 1`] = `
+{
+  "allKeysPresent": true,
+  "hasCustomExtensions": true,
+  "hasIgnoredFolders": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests saveConfig: should create config file with provided config 1`] = `
+{
+  "canLoad": true,
+  "customExtensions": [
+    ".ts",
+    ".tsx",
+  ],
+  "hasCustomFolder": true,
+  "saved": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests initConfig: should create default config file 1`] = `
+{
+  "afterInit": true,
+  "beforeInit": false,
+  "configMatchesDefaults": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests resetConfig: should delete config file if it exists 1`] = `
+{
+  "afterReset": false,
+  "beforeReset": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests resetConfig: should do nothing if config does not exist 1`] = `
+{
+  "afterReset": false,
+  "beforeReset": false,
+  "noError": true,
+}
+`;
+
+exports[`Config Functions - Snapshot Tests loadConfig: should handle corrupted JSON and return defaults 1`] = `
+{
+  "errorLogged": true,
+  "hasAllKeys": true,
+  "receivedDefaults": true,
+}
+`;

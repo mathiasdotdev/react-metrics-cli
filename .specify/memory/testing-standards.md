@@ -9,6 +9,7 @@
 ## Test Structure
 
 ### Directory Organization
+
 - **Tests unitaires**: `src/**/__tests__/*.test.ts`
 - **Tests d'intégration**: `src/__tests__/integration/`
 - **Helpers de test**: `src/__tests__/helpers/`

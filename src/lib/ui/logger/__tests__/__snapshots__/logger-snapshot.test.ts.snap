@@ -1,0 +1,124 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Logger - Snapshot Tests debug: should display debug message at DEBUG level 1`] = `
+"🐛 Debug message
+🐛 Debug with args [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests debug: should not display at INFO level or higher 1`] = `
+{
+  "debugSuppressed": true,
+}
+`;
+
+exports[`Logger - Snapshot Tests info: should display info message 1`] = `
+"💡 Info message
+💡 Info with data [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests log: should display plain log message 1`] = `
+"Plain log message
+Log with args arg1 arg2"
+`;
+
+exports[`Logger - Snapshot Tests success: should display success message 1`] = `
+"✅ Operation successful
+✅ Success with result [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests warn: should display warning message 1`] = `
+"⚠️ Warning message
+⚠️ Warning with details"
+`;
+
+exports[`Logger - Snapshot Tests error: should display error message 1`] = `
+"❌ Error message
+❌ Error with details"
+`;
+
+exports[`Logger - Snapshot Tests config: should display config message 1`] = `
+"🔐 Config loaded
+🔐 Config path /path/to/config"
+`;
+
+exports[`Logger - Snapshot Tests files: should display files message 1`] = `
+"📁 Processing file.ts
+📁 Found files 10"
+`;
+
+exports[`Logger - Snapshot Tests cleanup: should display cleanup message 1`] = `"🗑️ Cleaning up temp files"`;
+
+exports[`Logger - Snapshot Tests settings: should display settings message 1`] = `
+"⚙️ Settings updated
+⚙️ Setting value key=value"
+`;
+
+exports[`Logger - Snapshot Tests analysis: should display analysis message 1`] = `
+"🔍 Analyzing code
+🔍 Found issues 5"
+`;
+
+exports[`Logger - Snapshot Tests examples: should display examples message 1`] = `
+"✍️ Example command
+✍️ Usage npm run test"
+`;
+
+exports[`Logger - Snapshot Tests report: should display report message 1`] = `
+"📊 Generating report
+📊 Report stats [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests list: should display list item 1`] = `
+"- First item
+- Second item
+- Third item"
+`;
+
+exports[`Logger - Snapshot Tests section: should display section header 1`] = `
+"Section Title
+Another Section [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests filePath: should display file path 1`] = `
+"/path/to/file.ts
+./relative/path.js"
+`;
+
+exports[`Logger - Snapshot Tests label: should display label 1`] = `
+"Label:
+Status: active"
+`;
+
+exports[`Logger - Snapshot Tests colored: should display colored message 1`] = `
+"Blue message
+Red message [object Object]"
+`;
+
+exports[`Logger - Snapshot Tests newLine: should output blank line 1`] = `
+"Before
+
+
+After"
+`;
+
+exports[`Logger - Snapshot Tests setLevel: should filter messages by log level 1`] = `
+"⚠️ Warning - should appear
+❌ Error - should appear"
+`;
+
+exports[`Logger - Snapshot Tests all methods combined: should display all message types 1`] = `
+"🐛 Debug message
+💡 Info message
+✅ Success message
+⚠️ Warning message
+❌ Error message
+🔐 Config message
+📁 Files message
+⚙️ Settings message
+🔍 Analysis message
+📊 Report message
+- List item
+Section
+/path
+Label"
+`;

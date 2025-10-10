@@ -2,19 +2,17 @@
 
 ![React-Metrics CLI Screenshot](./assets/react-metrics.png)
 
-**React-Metrics CLI** est une interface en ligne de commande TypeScript pour analyser le code mort dans les projets React/TypeScript. Il utilise le projet [react-metrics](https://github.com/mathias-hadrien/react-metrics.git) (binaire Go) pour l'analyse de code mort et télécharge automatiquement les binaires depuis Nexus Repository.
+**React-Metrics CLI** est une interface en ligne de commande TypeScript pour analyser le code mort dans les projets React/TypeScript.
 
 ## 📋 Table des matières
 
 - [🚀 Installation et démarrage rapide](#-installation-et-démarrage-rapide)
 - [📖 Utilisation](#-utilisation)
 - [⚙️ Configuration](#️-configuration)
-- [🔐 Authentification sécurisée](#-authentification-sécurisée)
 - [✨ Fonctionnalités](#-fonctionnalités)
 - [🔧 Développement](#-développement)
 - [🔗 Intégration CI/CD](#-intégration-cicd)
 - [🚨 Dépannage](#-dépannage)
-- [📝 Diagnostic](#-diagnostic)
 - [🤝 Contribution](#-contribution)
 - [📄 Licence](#-license)
 
@@ -29,8 +27,7 @@ npm install -g react-metrics-cli@latest
 ### Premier lancement
 
 ```bash
-# Analyse locale (aucune configuration requise si un binaire local est disponible)
-# Sinon, voir la section "Configuration optionnelle"
+# Analyser le répertoire courant
 react-metrics analyze
 
 # Ou analyser un projet spécifique
@@ -45,34 +42,7 @@ react-metrics config
 
 # Initialiser le fichier de configuration avec les valeurs par défaut
 react-metrics config --init
-
-# Vous pouvez aussi configurer vos credentials Nexus avec la commande :
-react-metrics config --credentials
 ```
-
-> Pour copier le **User Token** de Nexus, allez dans [Nexus User Token](https://nexus.maif.io/#user/usertoken), puis copier le token en base64 (format user:password)
-
-### 📦 Binaires disponibles
-
-Les binaires Go sont automatiquement téléchargés depuis **Nexus Repository Manager** : [react-metrics-artefacts](https://nexus.maif.io/service/rest/repository/browse/react-metrics-artefacts/com/maif/react-metrics/)
-
-#### Téléchargement manuel d'une version spécifique
-
-```bash
-# Télécharger une version particulière depuis Nexus
-react-metrics download -g com.maif.react-metrics -r react-metrics-artefacts -v 1.2.0
-
-# Spécifier un binaire spécifique par plateforme (la plateforme est détectée automatiquement en fonction de votre système d'exploitation)
-react-metrics download -g com.maif.react-metrics -a react-metrics-windows-amd64-1.2.0 -r react-metrics-artefacts -v 1.2.0
-```
-
-| Paramètre           | Description                                 | Exemple                                                    |
-| ------------------- | ------------------------------------------- | ---------------------------------------------------------- |
-| `-g, --group-id`    | Group ID Maven                              | `com.maif.react-metrics`                                   |
-| `-r, --repository`  | Repository Nexus                            | `react-metrics-artefacts`                                  |
-| `-f, --format`      | Format de l'artefact                        | `maven2`                                                   |
-| `-a, --artifact-id` | Artifact ID (avec plateforme si spécifique) | `react-metrics` ou `react-metrics-windows-amd64-{version}` |
-| `-v, --version`     | Version du binaire                          | `1.2.0`                                                    |
 
 ## 📖 Utilisation
 
@@ -88,17 +58,7 @@ react-metrics analyze
 react-metrics analyze ./mon-projet-react
 
 # Mode debug avec logs détaillés
-react-metrics analyze --debug ./mon-projet-react
-```
-
-#### Couverture de tests
-
-```bash
-# Analyser la couverture
-react-metrics coverage
-
-# Générer rapport HTML
-react-metrics coverage --html output/coverage/coverage.html
+react-metrics analyze ./mon-projet-react --debug
 ```
 
 #### Configuration
@@ -110,26 +70,20 @@ react-metrics config
 # Voir la configuration actuelle
 react-metrics config --info
 
-# Créer/réinitialiser la configuration
+# Créer/initialiser la configuration avec les valeurs par défaut
 react-metrics config --init
+
+# Réinitialiser la configuration (supprimer le fichier)
+react-metrics config --reset
+
+# Activer/désactiver une analyse
+react-metrics config --enable constants
+react-metrics config --disable dependencies
+
+# Modifier une valeur spécifique
+react-metrics config --set "maxGoroutines=50"
+react-metrics config --set "analysis.definitions=false"
 ```
-
-#### Upload vers Nexus
-
-```bash
-# Upload des binaires (mode dry-run par défaut)
-react-metrics upload -v 1.0.0
-
-# Upload réel vers Nexus
-react-metrics upload -v 1.0.0 --no-dry-run
-```
-
-| Option             | Description                                   |
-| ------------------ | --------------------------------------------- |
-| `-v, --version`    | Version des binaires à uploader (obligatoire) |
-| `-r, --repository` | Repository Nexus cible                        |
-| `--dry-run`        | Simulation uniquement (par défaut)            |
-| `--no-dry-run`     | Upload réel vers Nexus                        |
 
 #### Aide contextuelle
 
@@ -145,76 +99,47 @@ react-metrics analyze --help
 
 ### Fichier de configuration global
 
-**Emplacement :** `$HOME/.nexus-utils/react-metrics.json`
+**Emplacement :** `$HOME/.react-metrics-cli/config.json`
 
 Le fichier permet de personnaliser :
 
 - Extensions de fichiers à analyser
 - Dossiers ignorés (standards + personnalisés)
-- Types d'analyses activées
+- Types d'analyses activées (constants, functions, classes, props, consoles, definitions, imports, exports, dependencies)
 - Formats de rapports (terminal, HTML, JSON)
 - Performances (nombre de goroutines)
-- Annotations `// react-metrics-ignore`
+- Annotations `// react-metrics-ignore-ligne` et `// react-metrics-ignore-file`
 
-**Usage :** Modifiez directement le fichier dans votre éditeur. Utilisez `react-metrics config` pour voir l'emplacement.
-
-### Emplacements des fichiers
+### Gestion de la configuration
 
 ```bash
-~/.nexus-utils/                     # Répertoire principal de configuration
-├── react-metrics.json              # Configuration de l'outil (extensions, analyses, rapports)
-├── .credentials                     # Tokens Nexus chiffrés avec AES
-├── artifacts/                       # Binaires téléchargés depuis Nexus
-└── cache/                          # Fichiers temporaires et cache
-    ├── download-cache/
-    └── temp-files/
+# Initialiser la configuration avec les valeurs par défaut
+react-metrics config --init
+
+# Afficher la configuration actuelle
+react-metrics config --info
+
+# Activer/désactiver une analyse spécifique
+react-metrics config --enable constants
+react-metrics config --disable dependencies
+
+# Modifier une valeur
+react-metrics config --set "maxGoroutines=50"
+react-metrics config --set "analysis.exports=false"
+
+# Réinitialiser la configuration
+react-metrics config --reset
 ```
 
-## 🔐 Authentification sécurisée
+**Usage :** Vous pouvez aussi modifier directement le fichier dans votre éditeur. Utilisez `react-metrics config` pour voir l'emplacement exact.
 
-### Configuration simplifiée des credentials
-
-React-Metrics CLI utilise un système d'authentification sécurisé simplifié :
-
-**📝 Étape 1** : Récupérez votre token depuis Nexus
-
-- Connectez-vous à Nexus Repository
-- Allez dans **User Token**
-- Copiez le token base64 (format `user:password` encodé)
-
-**🔒 Étape 2** : Configuration automatique
-
-```bash
-# Premier lancement - les credentials seront demandés automatiquement
-react-metrics analyze
-
-# Ou configuration explicite
-react-metrics config --credentials
-```
-
-**🛡️ Sécurité**
-
-- Token chiffré avec AES et mot de passe maître
-- Stockage sécurisé dans `~/.nexus-utils/.credentials`
-- Système de retry intelligent (3 tentatives)
-- Régénération automatique en cas d'échecs répétés
-
-### Variables d'environnement
-
-Personnalisez la configuration avec un fichier `.env` :
-
-```bash
-# Copiez .env.example vers .env et personnalisez les valeurs
-cp .env.example .env
-```
-
-Voir `.env.example` pour la liste complète des variables disponibles.
+📚 **Documentation complète** : Voir [Configuration Guide](./.specify/memory/configuration.md) pour plus de détails sur toutes les options disponibles.
 
 ## ✨ Fonctionnalités
 
 ### Configuration React-Metrics
 
-La CLI gère un fichier de configuration global dans `$HOME/.nexus-utils/react-metrics.json` qui permet de personnaliser :
+La CLI gère un fichier de configuration global qui permet de personnaliser :
 
 - **Extensions de fichiers** à analyser (`.js`, `.jsx`, `.ts`, `.tsx`)
 - **Dossiers ignorés** (standards + personnalisés)
@@ -227,7 +152,7 @@ La CLI gère un fichier de configuration global dans `$HOME/.nexus-utils/react-m
 
 ### Types de code mort détectés
 
-La CLI utilise le binaire Go pour détecter :
+L'analyseur TypeScript détecte :
 
 - **Constantes non utilisées** : `const UNUSED_CONSTANT = "valeur"`
 - **Fonctions non utilisées** : Fonctions classiques et fléchées
@@ -240,7 +165,6 @@ La CLI utilise le binaire Go pour détecter :
 ```bash
 🚀 React-Metrics - Analyse de code mort
 
-✅ Binaire trouvé
 🔍 Analyse du projet: /mon-projet-react
 
 === Constantes ===
@@ -253,8 +177,7 @@ Fichier: ../src/utils/helpers.ts:10:1
 
 Total: 2 éléments de code mort détectés
 
-✅ Analyse terminée avec succès en 1250ms
-📝 Logs debug disponibles dans: output/logs/react-metrics-debug.log
+✅ Analyse terminée avec succès
 ```
 
 ## 🔧 Développement
@@ -262,61 +185,61 @@ Total: 2 éléments de code mort détectés
 ### Prérequis
 
 - Node.js 22.14.0+
-- npm ou yarn
+- Bun 1.0.0+ (recommandé pour le développement)
+
+### ⚡ Compilateur TypeScript ultra-rapide
+
+Le projet utilise **tsgo** (TypeScript v7/Corsa), le nouveau compilateur TypeScript réécrit en Go qui offre des performances **jusqu'à 10x plus rapides** que le compilateur traditionnel.
+
+**Aucune modification de code nécessaire** - la migration est totalement transparente !
+
+📚 **Guide complet** : Consultez [TSGO-QUICKSTART.md](./TSGO-QUICKSTART.md) pour plus de détails sur tsgo, le support VS Code, et le dépannage.
 
 ### Installation des dépendances
 
 ```bash
-npm install
+bun install
 ```
+
+Le package `@typescript/native-preview` est automatiquement installé et utilisé pour la compilation.
 
 ### Scripts disponibles
 
 ```bash
-# Compilation TypeScript
-npm run build
+# Compilation TypeScript (utilise tsgo)
+bun bundle
 
-# Build optimisé pour la production
-npm run build:prod
-
-# Analyse de la taille du bundle
-npm run build:analyze
+# Build optimisé pour la production (utilise tsgo)
+bun bundle:prod
 
 # Nettoyage du répertoire dist
-npm run clean
+bun clean
 
 # Développement avec rechargement automatique
-npm run dev
+bun dev
 
-# Tests unitaires et d'intégration (Vitest)
-npm run test
+# Tests (Vitest)
+bun test
 
 # Tests en mode watch
-npm run test:watch
+bun test:watch
 
-# Tests avec coverage
-npm run test:coverage
+# Tests avec coverage pour CI/CD
+bun test:ci
 
-# Interface web pour les tests
-npm run test:ui
+# Formatage du code avec Prettier
+bun format
 
-# Tests d'intégration CLI uniquement
-npm run test:integration
-
-# Tests unitaires uniquement
-npm run test:unit
-
-# Démarrage de la CLI compilée
-npm start
+# Préparation avant publication (clean + build:prod + test)
+bun prepublish
 ```
 
 ### ⚠️ Note importante sur les versions
 
-Lors de l'incrémentation de version, pensez à mettre à jour **3 fichiers** :
+Lors de l'incrémentation de version, pensez à mettre à jour **2 fichiers** :
 
 - `package.json` - Version principale
 - `CHANGELOG.md` - Nouvelle entrée avec les modifications
-- `src/__tests__/integration/cli-basic.test.ts` - Test d'expectation de version (le test s'appelle `should display version when --version flag is used`)
 
 ### Architecture modulaire
 
@@ -325,31 +248,28 @@ react-metrics-cli/
 ├── src/
 │   ├── commands/                   # Commandes CLI
 │   │   ├── Analyze.ts                  # Commande d'analyse de code mort
-│   │   ├── Config.ts                   # Gestion de la configuration
-│   │   ├── Coverage.ts                 # Analyse de couverture de tests
-│   │   ├── Download.ts                 # Téléchargement d'artefacts Nexus
-│   │   └── Upload.ts                   # Upload vers Nexus
-│   ├── core/                       # Logique métier
-│   │   ├── binary/                     # Gestion des binaires Go
-│   │   │   ├── BinaryExecutor.ts           # Exécution des binaires
-│   │   │   └── BinaryManager.ts            # Téléchargement et gestion
+│   │   └── Config.ts                   # Gestion de la configuration
+│   ├── lib/                        # Logique métier
+│   │   ├── analysis/                   # Analyse de code mort
+│   │   │   ├── detection/                  # Détection des déclarations
+│   │   │   ├── verification/               # Vérification de l'utilisation
+│   │   │   ├── annotations/                # Gestion des annotations
+│   │   │   └── utils/                      # Utilitaires d'analyse
 │   │   ├── config/                     # Configuration système
-│   │   │   ├── ConfigManager.ts            # Gestionnaire de configuration
-│   │   │   └── System.ts                   # Constantes système
-│   │   └── nexus/                      # Authentification Nexus
-│   │       └── TokenManager.ts             # Gestion des tokens chiffrés
+│   │   ├── logger/                     # Système de logging
+│   │   ├── parser/                     # Parsing de fichiers
+│   │   ├── reporter/                   # Génération de rapports
+│   │   └── utils/                      # Utilitaires généraux
+│   ├── types/                      # Types TypeScript
+│   │   ├── analysis.ts                 # Types d'analyse
+│   │   ├── config.ts                   # Types de configuration
+│   │   ├── logger.ts                   # Types de logger
+│   │   └── reporter.ts                 # Types de reporter
 │   ├── ui/                         # Interface utilisateur
 │   │   ├── display/                    # Affichage console
-│   │   │   ├── HelpDisplay.ts              # Aide contextuelle
-│   │   │   └── LogoDisplay.ts              # Logo et branding
-│   │   ├── logger/                     # Système de logging
-│   │   │   └── Logger.ts                   # Logger centralisé
+│   │   ├── logger/                     # Logger CLI
 │   │   └── wrapper/                    # Wrappers Commander.js
-│   │       └── CommandWrapper.ts           # Wrapper des commandes
-│   ├── system/                     # Diagnostics système
-│   │   └── SystemDiagnostic.ts         # Diagnostic de l'environnement
 │   └── index.ts                    # Point d'entrée CLI
-├── scripts/                        # Scripts d'optimisation
 ├── dist/                           # Code TypeScript compilé
 ├── output/                         # Sortie des analyses et logs
 ├── assets/                         # Ressources (images, etc.)
@@ -359,21 +279,6 @@ react-metrics-cli/
 ```
 
 ## 🔗 Intégration CI/CD
-
-**Jenkins**
-
-```groovy
-pipeline {
-    agent any
-    stages {
-        stage('Analyse Code Mort') {
-            steps {
-                sh 'npx react-metrics-cli@latest analyze .'
-            }
-        }
-    }
-}
-```
 
 **GitHub Actions**
 
@@ -388,22 +293,11 @@ pipeline {
 
 ### Erreurs courantes
 
-| Erreur                        | Solution                                |
-| ----------------------------- | --------------------------------------- |
-| **Token invalide**            | Supprimer `~/.nexus-utils/.credentials` |
-| **Binaire non trouvé**        | Vérifier permissions Nexus              |
-| **Téléchargement impossible** | Vérifier connexion/permissions          |
-| **Permissions insuffisantes** | `chmod +x` sur le binaire               |
-
-### 📝 Diagnostic
-
-```bash
-# Mode debug
-react-metrics analyze --debug
-
-# Info configuration
-react-metrics config --info
-```
+| Erreur                     | Solution                                                            |
+| -------------------------- | ------------------------------------------------------------------- |
+| **Commande non reconnue**  | Vérifier l'installation : `npm list -g react-metrics-cli`           |
+| **Configuration invalide** | Réinitialiser : `react-metrics config --reset`                      |
+| **Fichiers non analysés**  | Vérifier votre configuration locale : `react-metrics config --info` |
 
 ## 🤝 Contribution
 

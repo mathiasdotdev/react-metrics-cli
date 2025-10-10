@@ -1,0 +1,230 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Integration Test - React Demo Analysis Functions Detection Details should detect all expected function names 1`] = `
+[
+  "Divide2Numbers",
+  "FunctionButton",
+  "appFetch",
+  "divide",
+  "oldArrowFunction",
+  "oldFunction",
+  "processUser",
+  "specificIgnoredFunction",
+  "temporaryFunction",
+  "thisWillAlsoBeDetected",
+  "unusedFunction",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Functions Detection Details should detect specific function details 1`] = `
+[
+  {
+    "column": 16,
+    "file": "src/config/fetch.ts",
+    "line": 7,
+    "name": "appFetch",
+  },
+  {
+    "column": 10,
+    "file": "src/features/cas1.ts",
+    "line": 27,
+    "name": "divide",
+  },
+  {
+    "column": 10,
+    "file": "src/features/cas2.ts",
+    "line": 20,
+    "name": "Divide2Numbers",
+  },
+  {
+    "column": 10,
+    "file": "src/features/advanced-props.tsx",
+    "line": 84,
+    "name": "FunctionButton",
+  },
+  {
+    "column": 14,
+    "file": "src/features/DeprecatedFeatures.ts",
+    "line": 42,
+    "name": "oldArrowFunction",
+  },
+  {
+    "column": 17,
+    "file": "src/features/DeprecatedFeatures.ts",
+    "line": 9,
+    "name": "oldFunction",
+  },
+  {
+    "column": 10,
+    "file": "src/types/TestDefinitions.ts",
+    "line": 72,
+    "name": "processUser",
+  },
+  {
+    "column": 10,
+    "file": "src/features/annotations.tsx",
+    "line": 19,
+    "name": "specificIgnoredFunction",
+  },
+  {
+    "column": 10,
+    "file": "src/features/annotations.tsx",
+    "line": 34,
+    "name": "temporaryFunction",
+  },
+  {
+    "column": 10,
+    "file": "src/features/ignore-file-late-comment.jsx",
+    "line": 6,
+    "name": "thisWillAlsoBeDetected",
+  },
+  {
+    "column": 7,
+    "file": "src/components/Button.tsx",
+    "line": 31,
+    "name": "unusedFunction",
+  },
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Classes Detection Details should detect all class names and locations 1`] = `
+[
+  {
+    "file": "src/features/DeprecatedFeatures.ts",
+    "line": 16,
+    "name": "OldClass",
+  },
+  {
+    "file": "src/components/ClassExample.tsx",
+    "line": 11,
+    "name": "UnusedClass",
+  },
+  {
+    "file": "src/features/cas1.ts",
+    "line": 32,
+    "name": "UnusedClass",
+  },
+  {
+    "file": "src/features/cas2.ts",
+    "line": 25,
+    "name": "UnusedClass",
+  },
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Constants Detection Details should detect all constant names 1`] = `
+[
+  "OLD_CONSTANT",
+  "blabla2",
+  "normalConstant",
+  "thisVariableWillAlsoBeDetected",
+  "thisVariableWillBeDetected",
+  "toto",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Props Detection Details should detect all prop names 1`] = `
+[
+  "active",
+  "appStatus",
+  "counter",
+  "data",
+  "errorElement",
+  "metadata",
+  "newProp",
+  "promise",
+  "signal",
+  "total",
+  "unused",
+  "user",
+  "users",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Console Logs Detection Details should detect console types distribution 1`] = `
+[
+  "console.debug",
+  "console.error",
+  "console.info",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.log",
+  "console.warn",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Types/Interfaces Detection Details should detect all type/interface names 1`] = `
+[
+  "CombinedStatus",
+  "DeprecatedProps",
+  "OldInterface",
+  "OldType",
+  "UnusedExportedInterface",
+  "UnusedExportedType",
+  "UnusedNotExportedInterface",
+  "UnusedNotExportedType",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Exports Detection Details should detect all export names 1`] = `
+[
+  "App",
+  "AuthenticatedButton",
+  "BasicButton",
+  "ButtonSimplified",
+  "ClassExample",
+  "ComplexButton",
+  "DefaultButton",
+  "ForwardRefButton",
+  "MemoizedButton",
+  "MultiLineButton",
+  "NEW_CONSTANT",
+  "NewClass",
+  "ROUTE_ALL",
+  "ROUTE_DASHBOARD",
+  "ROUTE_DEFAULT",
+  "ROUTE_LOGIN",
+  "ROUTE_SIGNUP",
+  "RenamedButton",
+  "SpreadButton",
+  "Subtract2Numbers",
+  "UnusedButton",
+  "UnusedExportedClass",
+  "UnusedExportedClass",
+  "goodbye",
+  "newFunction",
+  "router",
+  "withAuth",
+]
+`;
+
+exports[`Integration Test - React Demo Analysis Dependencies Detection Details should detect dependency details 1`] = `
+[
+  {
+    "file": "package.json",
+    "name": "@types/react-router-dom",
+  },
+  {
+    "file": "package.json",
+    "name": "react-dom",
+  },
+  {
+    "file": "package.json",
+    "name": "@types/react",
+  },
+  {
+    "file": "package.json",
+    "name": "@types/react-dom",
+  },
+  {
+    "file": "package.json",
+    "name": "typescript",
+  },
+]
+`;

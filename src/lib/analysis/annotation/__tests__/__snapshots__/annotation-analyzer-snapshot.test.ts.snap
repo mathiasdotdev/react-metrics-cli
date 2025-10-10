@@ -1,0 +1,143 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Annotation Analyzer - Snapshot Tests shouldIgnoreLine: should detect react-metrics-ignore-ligne annotation 1`] = `
+{
+  "blockAfterCode": true,
+  "blockComment": true,
+  "blockCommentWithSpaces": true,
+  "inlineAfterCode": true,
+  "noAnnotation": false,
+  "singleLineComment": true,
+  "singleLineWithSpaces": true,
+  "typoAnnotation": false,
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests shouldIgnoreDeclaration: should check current and previous line 1`] = `
+{
+  "annotationOnCurrentLine": true,
+  "annotationOnPreviousLine": true,
+  "annotationTooFarAbove": false,
+  "noAnnotation": false,
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests shouldIgnoreDeclarationWithContext: should check multiple lines above 1`] = `
+{
+  "annotationBeyondContext": false,
+  "annotationInContext3Lines": false,
+  "annotationWithinContext5Lines": true,
+  "codeBreaksContext": false,
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests shouldIgnoreFile: should detect react-metrics-ignore-file annotation 1`] = `
+{
+  "afterCode": false,
+  "afterEmptyLines": true,
+  "blockCommentAtTop": true,
+  "inBlockComment": true,
+  "noAnnotation": false,
+  "singleLineAtTop": true,
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests isDeprecatedDeclaration: should detect @deprecated annotation 1`] = `
+{
+  "codeBreaksDeprecatedContext": false,
+  "deprecatedTooFarAbove": false,
+  "deprecatedWithReason": true,
+  "deprecatedWithinContext": true,
+  "jsdocDeprecated": true,
+  "noDeprecated": false,
+  "singleLineDeprecated": true,
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests combined scenarios: real-world code examples 1`] = `
+{
+  "componentWithIgnore": {
+    "code": [
+      "// react-metrics-ignore-file",
+      "import React from "react";",
+      "",
+      "export function MyComponent() {",
+      "  return <div>Hello</div>;",
+      "}",
+    ],
+    "shouldIgnoreFile": true,
+  },
+  "deprecatedFunction": {
+    "code": [
+      "/**",
+      " * Legacy authentication function",
+      " * @deprecated Use authenticateV2 instead",
+      " */",
+      "export function authenticate() {}",
+    ],
+    "isDeprecated": true,
+  },
+  "ignoredVariable": {
+    "code": [
+      "const USED_CONSTANT = 1;",
+      "",
+      "// react-metrics-ignore-ligne",
+      "const IGNORED_CONSTANT = 2;",
+      "",
+      "const ANOTHER_USED = 3;",
+    ],
+    "line3Ignored": true,
+    "line6NotIgnored": false,
+  },
+  "jsdocWithMultipleAnnotations": {
+    "code": [
+      "/**",
+      " * Complex function",
+      " * @param {string} input",
+      " * @deprecated",
+      " * @returns {string}",
+      " */",
+      "function process(input) {}",
+    ],
+    "hasDeprecated": true,
+    "hasIgnore": false,
+  },
+}
+`;
+
+exports[`Annotation Analyzer - Snapshot Tests edge cases: boundary conditions 1`] = `
+{
+  "annotationVariations": {
+    "inBlockWithText": true,
+    "inSingleLineWithText": true,
+    "withExtraSpaces": true,
+    "withTabs": true,
+  },
+  "emptyFile": {
+    "isDeprecated": false,
+    "shouldIgnore": false,
+    "shouldIgnoreFile": false,
+  },
+  "lineNumberBeyondArray": {
+    "isDeprecated": false,
+    "shouldIgnore": false,
+  },
+  "lineNumberZero": {
+    "isDeprecated": false,
+    "shouldIgnore": false,
+  },
+  "onlyWhitespaceLines": {
+    "lines": [
+      "",
+      "  ",
+      "	",
+      "",
+    ],
+    "shouldIgnoreFile": false,
+  },
+  "singleLine": {
+    "isDeprecated": false,
+    "shouldIgnoreFile": true,
+  },
+}
+`;

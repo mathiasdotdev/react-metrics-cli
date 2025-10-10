@@ -1,0 +1,499 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`generateFileReport should generate empty report 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 0
+Code mort détecté: 0
+
+Répartition par type:
+
+=== TOUTES LES DÉCLARATIONS ===
+
+=== CODE MORT DÉTECTÉ ===
+Aucun code mort détecté ! 🎉
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with functions only 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 2
+Code mort détecté: 2
+Pourcentage de code mort: 100.00%
+
+Répartition par type:
+  FUNCTION: 2/2 (100.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- FUNCTION ---
+anotherUnused | /src/other.ts:20:3 | NON UTILISÉE
+unusedFunction | /src/file.ts:10:5 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- FUNCTION ---
+Fichier: /src/other.ts:20:3
+       Nom: anotherUnused
+
+Fichier: /src/file.ts:10:5
+       Nom: unusedFunction
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with classes only 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 2
+Code mort détecté: 2
+Pourcentage de code mort: 100.00%
+
+Répartition par type:
+  CLASS: 2/2 (100.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CLASS ---
+OldClass | /src/legacy.ts:30:7 | NON UTILISÉE
+UnusedClass | /src/class.ts:15:7 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- CLASS ---
+Fichier: /src/legacy.ts:30:7
+       Nom: OldClass
+
+Fichier: /src/class.ts:15:7
+       Nom: UnusedClass
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with constants and props 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 2
+Code mort détecté: 2
+Pourcentage de code mort: 100.00%
+
+Répartition par type:
+  CONSTANT: 1/1 (100.0% mort)
+  PROP: 1/1 (100.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CONSTANT ---
+UNUSED_CONST | /src/constants.ts:5:7 | NON UTILISÉE
+
+--- PROP ---
+unusedProp | /src/props.tsx:8:3 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- CONSTANT ---
+Fichier: /src/constants.ts:5:7
+       Nom: UNUSED_CONST
+
+
+--- PROP ---
+Fichier: /src/props.tsx:8:3
+       Nom: unusedProp
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with mixed categories 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 8
+Code mort détecté: 8
+Pourcentage de code mort: 100.00%
+
+Répartition par type:
+  CONSTANT: 1/1 (100.0% mort)
+  FUNCTION: 1/1 (100.0% mort)
+  CLASS: 1/1 (100.0% mort)
+  CONSOLE: 1/1 (100.0% mort)
+  PROP: 1/1 (100.0% mort)
+  DEFINITION: 1/1 (100.0% mort)
+  EXPORT: 1/1 (100.0% mort)
+  DEPENDENCY: 1/1 (100.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CLASS ---
+cls | /c.ts:1:1 | NON UTILISÉE
+
+--- CONSOLE ---
+console | /c.ts:1:1 | NON UTILISÉE
+
+--- CONSTANT ---
+const1 | /c.ts:1:1 | NON UTILISÉE
+
+--- DEFINITION ---
+Type1 | /t.ts:1:1 | NON UTILISÉE
+
+--- DEPENDENCY ---
+dep | /p.json:1:1 | NON UTILISÉE
+
+--- EXPORT ---
+Export1 | /e.ts:1:1 | NON UTILISÉE
+
+--- FUNCTION ---
+fn | /f.ts:1:1 | NON UTILISÉE
+
+--- PROP ---
+prop | /p.ts:1:1 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- FUNCTION ---
+Fichier: /f.ts:1:1
+       Nom: fn
+
+
+--- CLASS ---
+Fichier: /c.ts:1:1
+       Nom: cls
+
+
+--- CONSTANT ---
+Fichier: /c.ts:1:1
+       Nom: const1
+
+
+--- PROP ---
+Fichier: /p.ts:1:1
+       Nom: prop
+
+
+--- CONSOLE ---
+Fichier: /c.ts:1:1
+       Nom: console
+
+
+--- DEFINITION ---
+Fichier: /t.ts:1:1
+       Nom: Type1
+
+
+--- EXPORT ---
+Fichier: /e.ts:1:1
+       Nom: Export1
+
+
+--- DEPENDENCY ---
+Fichier: /p.json:1:1
+       Nom: dep
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with real-world scenario 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 31
+Code mort détecté: 31
+Pourcentage de code mort: 100.00%
+
+Répartition par type:
+  CONSTANT: 12/12 (100.0% mort)
+  FUNCTION: 10/10 (100.0% mort)
+  CLASS: 3/3 (100.0% mort)
+  PROP: 6/6 (100.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CLASS ---
+Class0 | /c.ts:1:1 | NON UTILISÉE
+Class1 | /c.ts:2:1 | NON UTILISÉE
+Class2 | /c.ts:3:1 | NON UTILISÉE
+
+--- CONSTANT ---
+const0 | /c.ts:1:1 | NON UTILISÉE
+const1 | /c.ts:2:1 | NON UTILISÉE
+const10 | /c.ts:11:1 | NON UTILISÉE
+const11 | /c.ts:12:1 | NON UTILISÉE
+const2 | /c.ts:3:1 | NON UTILISÉE
+const3 | /c.ts:4:1 | NON UTILISÉE
+const4 | /c.ts:5:1 | NON UTILISÉE
+const5 | /c.ts:6:1 | NON UTILISÉE
+const6 | /c.ts:7:1 | NON UTILISÉE
+const7 | /c.ts:8:1 | NON UTILISÉE
+const8 | /c.ts:9:1 | NON UTILISÉE
+const9 | /c.ts:10:1 | NON UTILISÉE
+
+--- FUNCTION ---
+function0 | /f.ts:1:1 | NON UTILISÉE
+function1 | /f.ts:2:1 | NON UTILISÉE
+function2 | /f.ts:3:1 | NON UTILISÉE
+function3 | /f.ts:4:1 | NON UTILISÉE
+function4 | /f.ts:5:1 | NON UTILISÉE
+function5 | /f.ts:6:1 | NON UTILISÉE
+function6 | /f.ts:7:1 | NON UTILISÉE
+function7 | /f.ts:8:1 | NON UTILISÉE
+function8 | /f.ts:9:1 | NON UTILISÉE
+function9 | /f.ts:10:1 | NON UTILISÉE
+
+--- PROP ---
+prop0 | /p.ts:1:1 | NON UTILISÉE
+prop1 | /p.ts:2:1 | NON UTILISÉE
+prop2 | /p.ts:3:1 | NON UTILISÉE
+prop3 | /p.ts:4:1 | NON UTILISÉE
+prop4 | /p.ts:5:1 | NON UTILISÉE
+prop5 | /p.ts:6:1 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- FUNCTION ---
+Fichier: /f.ts:1:1
+       Nom: function0
+
+Fichier: /f.ts:2:1
+       Nom: function1
+
+Fichier: /f.ts:3:1
+       Nom: function2
+
+Fichier: /f.ts:4:1
+       Nom: function3
+
+Fichier: /f.ts:5:1
+       Nom: function4
+
+Fichier: /f.ts:6:1
+       Nom: function5
+
+Fichier: /f.ts:7:1
+       Nom: function6
+
+Fichier: /f.ts:8:1
+       Nom: function7
+
+Fichier: /f.ts:9:1
+       Nom: function8
+
+Fichier: /f.ts:10:1
+       Nom: function9
+
+
+--- CLASS ---
+Fichier: /c.ts:1:1
+       Nom: Class0
+
+Fichier: /c.ts:2:1
+       Nom: Class1
+
+Fichier: /c.ts:3:1
+       Nom: Class2
+
+
+--- CONSTANT ---
+Fichier: /c.ts:1:1
+       Nom: const0
+
+Fichier: /c.ts:2:1
+       Nom: const1
+
+Fichier: /c.ts:11:1
+       Nom: const10
+
+Fichier: /c.ts:12:1
+       Nom: const11
+
+Fichier: /c.ts:3:1
+       Nom: const2
+
+Fichier: /c.ts:4:1
+       Nom: const3
+
+Fichier: /c.ts:5:1
+       Nom: const4
+
+Fichier: /c.ts:6:1
+       Nom: const5
+
+Fichier: /c.ts:7:1
+       Nom: const6
+
+Fichier: /c.ts:8:1
+       Nom: const7
+
+Fichier: /c.ts:9:1
+       Nom: const8
+
+Fichier: /c.ts:10:1
+       Nom: const9
+
+
+--- PROP ---
+Fichier: /p.ts:1:1
+       Nom: prop0
+
+Fichier: /p.ts:2:1
+       Nom: prop1
+
+Fichier: /p.ts:3:1
+       Nom: prop2
+
+Fichier: /p.ts:4:1
+       Nom: prop3
+
+Fichier: /p.ts:5:1
+       Nom: prop4
+
+Fichier: /p.ts:6:1
+       Nom: prop5
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with deprecated declarations only 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 2
+Code mort détecté: 1
+Pourcentage de code mort: 50.00%
+
+Répartition par type:
+  FUNCTION: 1/1 (100.0% mort)
+  CLASS: 0/1 (0.0% mort)
+
+Déclarations @deprecated: 2
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CLASS ---
+OldClass | /c.ts:1:1 | UTILISÉE
+
+--- FUNCTION ---
+oldFunc | /f.ts:1:1 | NON UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- FUNCTION ---
+Fichier: /f.ts:1:1
+       Nom: oldFunc
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Suggestion: Considérer la suppression ou le remplacement de ces déclarations.
+
+
+--- FUNCTION ---
+Fichier: /f.ts:1:1
+       Nom: oldFunc
+       Statut: NON UTILISÉE
+
+
+--- CLASS ---
+Fichier: /c.ts:1:1
+       Nom: OldClass
+       Statut: UTILISÉE
+"
+`;
+
+exports[`generateFileReport should generate report with locally used export 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 2
+Code mort détecté: 0
+Pourcentage de code mort: 0.00%
+
+Répartition par type:
+  EXPORT: 0/2 (0.0% mort)
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- EXPORT ---
+myExport | /e.ts:10:5 | UTILISÉE LOCALEMENT (supprimer export)
+publicExport | /e.ts:20:5 | UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+Aucun code mort détecté ! 🎉
+
+=== DÉCLARATIONS @DEPRECATED ===
+Aucune déclaration @deprecated détectée."
+`;
+
+exports[`generateFileReport should generate report with deprecated and local exports 1`] = `
+"=== RAPPORT D'ANALYSE REACT-METRICS ===
+Généré le: DD/MM/YYYY HH:MM:SS
+
+=== STATISTIQUES ===
+Total déclarations trouvées: 4
+Code mort détecté: 1
+Pourcentage de code mort: 25.00%
+
+Répartition par type:
+  FUNCTION: 0/1 (0.0% mort)
+  CLASS: 1/1 (100.0% mort)
+  EXPORT: 0/2 (0.0% mort)
+
+Déclarations @deprecated: 2
+
+=== TOUTES LES DÉCLARATIONS ===
+
+--- CLASS ---
+LegacyService | /srv.ts:10:1 | NON UTILISÉE
+
+--- EXPORT ---
+internalHelper | /helper.ts:3:1 | UTILISÉE LOCALEMENT (supprimer export)
+publicAPI | /api.ts:20:1 | UTILISÉE
+
+--- FUNCTION ---
+oldAPI | /api.ts:5:1 | UTILISÉE
+
+=== CODE MORT DÉTECTÉ ===
+
+--- CLASS ---
+Fichier: /srv.ts:10:1
+       Nom: LegacyService
+
+
+=== DÉCLARATIONS @DEPRECATED ===
+Suggestion: Considérer la suppression ou le remplacement de ces déclarations.
+
+
+--- FUNCTION ---
+Fichier: /api.ts:5:1
+       Nom: oldAPI
+       Statut: UTILISÉE
+
+
+--- CLASS ---
+Fichier: /srv.ts:10:1
+       Nom: LegacyService
+       Statut: NON UTILISÉE
+"
+`;

@@ -1,1 +1,12 @@
-"@maiffr/lib-prettier-config"
+{
+  "singleQuote": true,
+  "printWidth": 80,
+  "semi": true,
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "bracketSameLine": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "all",
+  "arrowParens": "always",
+  "endOfLine": "lf"
+}

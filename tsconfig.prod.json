@@ -1,23 +1,10 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    // 📝 optimisation CLI pure (pas d'usage programmatique)
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
-    "resolveJsonModule": true,
-    "removeComments": true,
-    "noEmitOnError": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/__tests__/**/*"]
+    "removeComments": true
+  }
 }

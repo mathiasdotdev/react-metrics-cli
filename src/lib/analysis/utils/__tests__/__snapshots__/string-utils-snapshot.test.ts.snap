@@ -1,0 +1,168 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`String Utils - Snapshot Tests isIdentifierChar: should validate identifier characters 1`] = `
+{
+  "dash": false,
+  "digit": true,
+  "dollar": true,
+  "dot": false,
+  "empty": false,
+  "lowercase": true,
+  "multipleChars": false,
+  "space": false,
+  "underscore": true,
+  "uppercase": true,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isValidName: should validate JavaScript identifier names 1`] = `
+{
+  "containsAt": false,
+  "containsDash": false,
+  "containsDot": false,
+  "containsSpace": false,
+  "containsSpecialChar": false,
+  "emptyString": false,
+  "startsWithAt": false,
+  "startsWithDash": false,
+  "startsWithDot": false,
+  "startsWithNumber": false,
+  "validCamelCase": true,
+  "validDollarOnly": true,
+  "validPascalCase": true,
+  "validUnderscoreOnly": true,
+  "validWithDollar": true,
+  "validWithNumbers": true,
+  "validWithUnderscore": true,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isInString: should detect if position is inside string 1`] = `
+{
+  "afterDoubleQuotes": false,
+  "beforeDoubleQuotes": false,
+  "beforeSingleQuotes": false,
+  "insideBackticks": true,
+  "insideDoubleQuotes": true,
+  "insideSingleQuotes": true,
+  "insideTemplateInterpolation": true,
+  "outside": false,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isInStringWithName: should detect if name is inside string 1`] = `
+{
+  "nameInDoubleQuotes": true,
+  "nameInSingleQuotes": true,
+  "nameInTemplate": true,
+  "nameNotPresent": false,
+  "nameOutsideString": false,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isComment: should detect comment lines 1`] = `
+{
+  "blockComment": true,
+  "code": false,
+  "codeWithInlineComment": false,
+  "emptyLine": false,
+  "singleLineComment": true,
+  "starComment": true,
+  "whitespace": false,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isCompleteIdentifier: should validate complete identifiers in line 1`] = `
+{
+  "exactMatch": true,
+  "inFunctionCall": true,
+  "notPresent": false,
+  "partOfLargerWord": false,
+  "propertyAccess": true,
+  "withParentheses": true,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isInInterface: should detect if line is inside interface definition 1`] = `
+{
+  "beforeInterface": false,
+  "insideInterface": true,
+  "insideType": true,
+  "outsideInterface": false,
+}
+`;
+
+exports[`String Utils - Snapshot Tests isImportOrExport: should detect import/export statements 1`] = `
+{
+  "commentWithImport": false,
+  "export": true,
+  "exportDefault": true,
+  "exportFunction": true,
+  "import": true,
+  "namedImport": true,
+  "regularCode": false,
+}
+`;
+
+exports[`String Utils - Snapshot Tests combined: complex code scenarios 1`] = `
+{
+  "importWithComplexNames": {
+    "line1IsImport": true,
+    "line2IsNotImport": false,
+    "lines": [
+      "import { myVariable, otherVar } from "./module";",
+      "const myVariable = 1;",
+      "const myVariableExtended = 2;",
+    ],
+    "myVariableCompleteInLine2": true,
+    "myVariableInLine3": false,
+  },
+  "interfaceWithStrings": {
+    "commentDetected": false,
+    "line2IsInterface": true,
+    "lines": [
+      "interface Config {",
+      "  path: string; // "default path"",
+      "  name: string;",
+      "}",
+    ],
+    "pathInString": false,
+  },
+  "stringsAndIdentifiers": {
+    "code": "const message = "Hello myVariable"; const myVariable = 1;",
+    "firstMyVariableInString": true,
+    "messageIsIdentifier": true,
+  },
+}
+`;
+
+exports[`String Utils - Snapshot Tests edge cases: boundary conditions 1`] = `
+{
+  "emptyName": {
+    "isCompleteIdentifier": false,
+    "isInStringWithName": false,
+  },
+  "emptyString": {
+    "isComment": false,
+    "isImportOrExport": false,
+    "isInString": false,
+  },
+  "negativePosition": {
+    "isInString": false,
+  },
+  "positionBeyondLength": {
+    "isInString": false,
+  },
+  "singleCharacter": {
+    "$": true,
+    "_": true,
+    "a": true,
+  },
+  "specialCharacters": {
+    "at": false,
+    "dash": false,
+    "dot": false,
+    "hash": false,
+  },
+}
+`;
